@@ -3,11 +3,11 @@ package com.example.projetl3
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executors
@@ -41,9 +41,19 @@ class MainActivity : AppCompatActivity() {
         // Set up the listener for take photo button
         camera_capture_button.setOnClickListener { takePhoto() }
 
+        // Set up the listener for button login page
+        login_button.setOnClickListener { switchToLoginPage() }
+
         outputDirectory = getOutputDirectory()
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun switchToLoginPage(){
+        //
+        val otherActivity = Intent(this, LoginApp::class.java)
+        startActivity(otherActivity)
+        finish()
     }
 
     private fun takePhoto() {
