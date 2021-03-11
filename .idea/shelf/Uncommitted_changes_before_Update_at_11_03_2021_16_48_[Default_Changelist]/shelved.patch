@@ -1,0 +1,61 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.projetl3\">\r\n    <uses-feature android:name=\"android.hardware.camera.any\" />\r\n    <uses-permission android:name=\"android.permission.CAMERA\" />\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/AppTheme\">\r\n        <activity android:name=\".MainActivity\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity\r\n            android:name=\".LoginApp\"\r\n            android:label=\"@string/app_name\" >\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision bd6a9f80c1bf7e63c2eec0b0c545b813b651f75d)
++++ app/src/main/AndroidManifest.xml	(date 1614378932532)
+@@ -3,6 +3,8 @@
+     package="com.example.projetl3">
+     <uses-feature android:name="android.hardware.camera.any" />
+     <uses-permission android:name="android.permission.CAMERA" />
++    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
++
+     <application
+         android:allowBackup="true"
+         android:icon="@mipmap/ic_launcher"
+Index: app/src/main/java/com/example/projetl3/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.projetl3\r\n\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport android.os.Bundle\r\nimport android.Manifest\r\nimport android.content.Intent\r\nimport android.content.pm.PackageManager\r\nimport android.net.Uri\r\nimport android.util.Log\r\nimport android.widget.Toast\r\nimport androidx.core.app.ActivityCompat\r\nimport androidx.core.content.ContextCompat\r\nimport java.util.concurrent.Executors\r\nimport androidx.camera.core.*\r\nimport androidx.camera.lifecycle.ProcessCameraProvider\r\nimport kotlinx.android.synthetic.main.activity_main.*\r\nimport java.io.File\r\nimport java.text.SimpleDateFormat\r\nimport java.util.*\r\nimport java.util.concurrent.ExecutorService\r\ntypealias LumaListener = (luma: Double) -> Unit\r\n\r\nclass MainActivity : AppCompatActivity() {\r\n    private var imageCapture: ImageCapture? = null\r\n\r\n    private lateinit var outputDirectory: File\r\n    private lateinit var cameraExecutor: ExecutorService\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_main)\r\n\r\n        // Request camera permissions\r\n        if (allPermissionsGranted()) {\r\n            startCamera()\r\n        } else {\r\n            ActivityCompat.requestPermissions(\r\n                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)\r\n        }\r\n\r\n        // Set up the listener for take photo button\r\n        camera_capture_button.setOnClickListener { takePhoto() }\r\n\r\n        // Set up the listener for button login page\r\n        login_button.setOnClickListener { switchToLoginPage() }\r\n\r\n        outputDirectory = getOutputDirectory()\r\n\r\n        cameraExecutor = Executors.newSingleThreadExecutor()\r\n    }\r\n\r\n    private fun switchToLoginPage(){\r\n        //\r\n        val otherActivity = Intent(this, LoginApp::class.java)\r\n        startActivity(otherActivity)\r\n        finish()\r\n    }\r\n\r\n    private fun takePhoto() {\r\n        // Get a stable reference of the modifiable image capture use case\r\n        val imageCapture = imageCapture ?: return\r\n\r\n        // Create time-stamped output file to hold the image\r\n        val photoFile = File(\r\n            outputDirectory,\r\n            SimpleDateFormat(FILENAME_FORMAT, Locale.US\r\n            ).format(System.currentTimeMillis()) + \".jpg\")\r\n\r\n        // Create output options object which contains file + metadata\r\n        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()\r\n\r\n        // Set up image capture listener, which is triggered after photo has\r\n        // been taken\r\n        imageCapture.takePicture(\r\n            outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {\r\n                override fun onError(exc: ImageCaptureException) {\r\n                    Log.e(TAG, \"Photo capture failed: ${exc.message}\", exc)\r\n                }\r\n\r\n                override fun onImageSaved(output: ImageCapture.OutputFileResults) {\r\n                    val savedUri = Uri.fromFile(photoFile)\r\n                    val msg = \"Photo capture succeeded: $savedUri\"\r\n                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()\r\n                    Log.d(TAG, msg)\r\n                }\r\n            })\r\n    }\r\n\r\n    private fun startCamera() {\r\n        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)\r\n\r\n        cameraProviderFuture.addListener({\r\n            // Used to bind the lifecycle of cameras to the lifecycle owner\r\n            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()\r\n\r\n            // Preview\r\n            val preview = Preview.Builder()\r\n                .build()\r\n                .also {\r\n                    it.setSurfaceProvider(viewFinder.surfaceProvider)\r\n                }\r\n\r\n            imageCapture = ImageCapture.Builder()\r\n                .build()\r\n\r\n            // Select back camera as a default\r\n            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA\r\n\r\n            try {\r\n                // Unbind use cases before rebinding\r\n                cameraProvider.unbindAll()\r\n\r\n                // Bind use cases to camera\r\n                cameraProvider.bindToLifecycle(\r\n                    this, cameraSelector, preview, imageCapture)\r\n\r\n            } catch(exc: Exception) {\r\n                Log.e(TAG, \"Use case binding failed\", exc)\r\n            }\r\n\r\n        }, ContextCompat.getMainExecutor(this))\r\n    }\r\n\r\n    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {\r\n        ContextCompat.checkSelfPermission(\r\n            baseContext, it) == PackageManager.PERMISSION_GRANTED\r\n    }\r\n\r\n    private fun getOutputDirectory(): File {\r\n        val mediaDir = externalMediaDirs.firstOrNull()?.let {\r\n            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }\r\n        return if (mediaDir != null && mediaDir.exists())\r\n            mediaDir else filesDir\r\n    }\r\n\r\n    override fun onDestroy() {\r\n        super.onDestroy()\r\n        cameraExecutor.shutdown()\r\n    }\r\n\r\n    override fun onRequestPermissionsResult(\r\n        requestCode: Int, permissions: Array<String>, grantResults:\r\n        IntArray) {\r\n        if (requestCode == REQUEST_CODE_PERMISSIONS) {\r\n            if (allPermissionsGranted()) {\r\n                startCamera()\r\n            } else {\r\n                Toast.makeText(this,\r\n                    \"Permissions not granted by the user.\",\r\n                    Toast.LENGTH_SHORT).show()\r\n                finish()\r\n            }\r\n        }\r\n    }\r\n\r\n    companion object {\r\n        private const val TAG = \"CameraXBasic\"\r\n        private const val FILENAME_FORMAT = \"yyyy-MM-dd-HH-mm-ss-SSS\"\r\n        private const val REQUEST_CODE_PERMISSIONS = 10\r\n        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/projetl3/MainActivity.kt	(revision bd6a9f80c1bf7e63c2eec0b0c545b813b651f75d)
++++ app/src/main/java/com/example/projetl3/MainActivity.kt	(date 1614379183118)
+@@ -15,6 +15,7 @@
+ import androidx.camera.lifecycle.ProcessCameraProvider
+ import kotlinx.android.synthetic.main.activity_main.*
+ import java.io.File
++import java.net.URI
+ import java.text.SimpleDateFormat
+ import java.util.*
+ import java.util.concurrent.ExecutorService
+@@ -62,7 +63,7 @@
+ 
+         // Create time-stamped output file to hold the image
+         val photoFile = File(
+-            outputDirectory,
++            outputDirectory ,
+             SimpleDateFormat(FILENAME_FORMAT, Locale.US
+             ).format(System.currentTimeMillis()) + ".jpg")
+ 
+@@ -71,6 +72,7 @@
+ 
+         // Set up image capture listener, which is triggered after photo has
+         // been taken
++        var savedUri: Uri;
+         imageCapture.takePicture(
+             outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
+                 override fun onError(exc: ImageCaptureException) {
+@@ -78,7 +80,7 @@
+                 }
+ 
+                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+-                    val savedUri = Uri.fromFile(photoFile)
++                    savedUri = Uri.fromFile(photoFile)
+                     val msg = "Photo capture succeeded: $savedUri"
+                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                     Log.d(TAG, msg)
