@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
     defaultConfig {
@@ -44,5 +44,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:1.1.0-alpha02"
 // CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha22"
+    // MySQL connection
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
 
 }
