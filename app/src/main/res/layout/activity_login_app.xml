@@ -77,7 +77,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/abc_vector_test"
-        android:contentDescription="Retour page d'accueil" />
+        android:contentDescription="@string/retour" />
 
     <TextView
         android:id="@+id/tvRegister"

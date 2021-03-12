@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">ProjetL3</string>
-    <string name="pas_inscrit">Pas encore inscrit? Inscris-toi !</string>
-    <string name="se_connecter">Se connecter</string>
-    <string name="pass">Mot de passe</string>
-    <string name="e_mail">E-mail</string>
+    <string name="retour">Retour page d\'accueil</string>
+    <string name="login">Login</string>
+    <string name="text">text</string>
 
 </resources>
