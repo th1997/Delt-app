@@ -24,7 +24,7 @@ public class LoginApp extends AppCompatActivity {
         this.retour = (ImageButton) findViewById(R.id.btn_go_to_main);
         userRegisterPage = (TextView) findViewById(R.id.tvRegister);
         View view = this.getWindow().getDecorView();
-        view.setBackgroundColor(android.R.color.background_dark);
+        view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

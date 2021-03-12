@@ -11,18 +11,28 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class RegisterApp extends AppCompatActivity {
 
     private ImageButton retour;
     private EditText email, nom, prenom, pwd1, pwd2;
     private Button bRegister;
     private TextView userLoginPage;
+    private Database db;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_app);
+        this.db = new Database();
+        View view = this.getWindow().getDecorView();
+        view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
         setupUIViews();
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,7 +46,12 @@ public class RegisterApp extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(validate()){
-                    Toast.makeText(RegisterApp.this, "Création du compte!", Toast.LENGTH_SHORT).show();
+                    if(register()){
+                        Toast.makeText(RegisterApp.this, "Création du compte réussi!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(RegisterApp.this, "Erreur lors de la création du compte!", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         });
@@ -80,6 +95,48 @@ public class RegisterApp extends AppCompatActivity {
         }
 
         return result;
+    }
+/*
+    private Boolean emailTaken(){
+        Boolean isTaken = false;
+        if(validate()){
+            try {
+                Database db = new Database();
+                db.connect();
+                Connection conn = db.getConnection();
+                String queryEmail = "SELECT * FROM `Utilisateurs` WHERE `email`=?";
+                PreparedStatement ps = conn.prepareStatement(queryEmail);
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()){
+                    isTaken = true;
+                    Toast.makeText(this, "Cet adresse mail est déjà utilisé!", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (SQLException | ClassNotFoundException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return isTaken;
+    }
+
+ */
+
+    private Boolean register(){
+        Boolean isRegistered = false;
+        String emailText = email.getText().toString().trim();
+        String nomText = nom.getText().toString().trim();
+        String prenomText = prenom.getText().toString().trim();
+        String pwd1Text = pwd1.getText().toString().trim();
+        Boolean bool = false;
+        try {
+            bool = db.emailTaken(emailText);
+            if(!bool){
+                isRegistered = true;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return isRegistered;
     }
 
 }
