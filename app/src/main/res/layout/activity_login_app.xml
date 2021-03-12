@@ -15,7 +15,7 @@
         android:backgroundTintMode="screen"
         android:background="@drawable/text_border"
         android:ems="10"
-        android:hint="E-mail"
+        android:hint="@string/e_mail"
         android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -34,7 +34,7 @@
         android:backgroundTint="#FFFFFF"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="Mot de passe"
+        android:hint="@string/pass"
         android:textColorHint="#FFFFFF"
         android:inputType="textPassword"
         android:textColor="#FFFFFF"
@@ -52,7 +52,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="196dp"
         android:backgroundTint="#FF5722"
-        android:text="Se connecter"
+        android:text="@string/se_connecter"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -71,14 +71,14 @@
         app:layout_constraintHorizontal_bias="0.023"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/abc_vector_test" />
+        app:srcCompat="@drawable/abc_vector_test"/>
 
     <TextView
         android:id="@+id/tvRegister"
         android:layout_width="322dp"
         android:layout_height="75dp"
         android:layout_marginBottom="40dp"
-        android:text="Pas encore inscrit? Inscris-toi !"
+        android:text="@string/pas_inscrit"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
