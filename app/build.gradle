@@ -46,6 +46,6 @@ dependencies {
     implementation "androidx.camera:camera-view:1.0.0-alpha22"
     // MySQL connection
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
-    implementation group: 'com.jakewharton', name: 'butterknife', version: '10.2.3'
-    implementation group: 'com.rmtheis', name: 'tess-two', version: '9.1.0'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+
 }

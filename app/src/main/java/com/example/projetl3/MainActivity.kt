@@ -1,17 +1,14 @@
 package com.example.projetl3
 
 import android.Manifest
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.util.SparseArray
+import android.view.SurfaceHolder
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,18 +19,16 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.vision.CameraSource
+import com.google.android.gms.vision.Detector
+import com.google.android.gms.vision.text.TextBlock
+import com.google.android.gms.vision.text.TextRecognizer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-
-typealias LumaListener = (luma: Double) -> Unit
 
 class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
@@ -41,41 +36,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
 
-    //---------------------OCR-------------------------------
-    /*private var mTessOCR: TessOCR? = null
-    private var mResult: TextView? = null
-    private var mProgressDialog: ProgressDialog? = null
-    private var mImage: ImageView? = null
-    private var mButtonGallery: Button? = null
-    private  var mButtonCamera:Button? = null
-    private val mCurrentPhotoPath: String? = null
-    private val REQUEST_TAKE_PHOTO = 1
-    private val REQUEST_PICK_PHOTO = 2
-
-    private fun uriOCR(uri: Uri?) {
-        if (uri != null) {
-            var `is`: InputStream? = null
-            try {
-                `is` = contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(`is`)
-                mImage!!.setImageBitmap(bitmap)
-                doOCR(bitmap)
-            } catch (e: FileNotFoundException) {
-                // TODO Auto-generated catch block
-                e.printStackTrace()
-            } finally {
-                if (`is` != null) {
-                    try {
-                        `is`.close()
-                    } catch (e: IOException) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }
-    }*/
-    //--------------------------------------------------------------
+    //---------------------OCR-------------------------
+    private lateinit var cameraHolder: SurfaceHolder
+    private lateinit var cameraSource: CameraSource
+    private lateinit var textRecognizer: TextRecognizer
+    //--------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,23 +54,51 @@ class MainActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
-        //--------------------OCR-----------------------------
-        /*mResult = findViewById<View>(R.id.ocr_text) as TextView
-        val mButtonCamera = findViewById<View>(R.id.camera_capture_button) as Button
-        //mButtonCamera.setOnClickListener(this)
-        mTessOCR = TessOCR()*/
-        //-----------------------------------------------------
 
+        //---------------------OCR-------------------------
+        textRecognizer = TextRecognizer.Builder(this).build()
+
+        cameraSource = CameraSource.Builder(this, textRecognizer)
+            .setFacing(CameraSource.CAMERA_FACING_BACK)
+            .setAutoFocusEnabled(true)
+            .setRequestedFps(3.0f)
+            .build()
+
+        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceCreated(holder: SurfaceHolder) {
+                cameraHolder = surfaceView.holder
+
+                if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    finish()
+                }
+                cameraSource.start(cameraHolder)
+            }
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) { }
+            override fun surfaceDestroyed(holder: SurfaceHolder) { cameraSource.stop() }
+        })
+
+        textRecognizer.setProcessor(object : Detector.Processor<TextBlock> {
+            override fun release() {}
+            override fun receiveDetections(detections: Detector.Detections<TextBlock>) {
+                val items: SparseArray<TextBlock> = detections.detectedItems
+
+                ocr_text.text = (0 until items.size()).joinToString("\n") { items.get(it).value }
+
+            }
+        })
+
+        //--------------------------------------------------
+/*
         // Set up the listener for take photo button
-        camera_capture_button.setOnClickListener { takePhoto() }
+        camera_capture_button.setOnClickListener { takePhoto() }*/
 
 
         // Set up the listener for button login page
         login_button.setOnClickListener { switchToLoginPage() }
 
-        outputDirectory = getOutputDirectory()
+        //outputDirectory = getOutputDirectory()
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
+       // cameraExecutor = Executors.newSingleThreadExecutor()
 
 
     }
@@ -134,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up image capture listener, which is triggered after photo has
         // been taken
-        var savedUri: Uri;
+        var savedUri: Uri
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
@@ -160,11 +153,11 @@ class MainActivity : AppCompatActivity() {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
-            val preview = Preview.Builder()
+            /*val preview = Preview.Builder()
                 .build()
                 .also {
                     it.setSurfaceProvider(viewFinder.surfaceProvider)
-                }
+                }*/
 
             imageCapture = ImageCapture.Builder()
                 .build()
@@ -178,7 +171,8 @@ class MainActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
+                    this, cameraSelector, //preview,
+                    imageCapture
                 )
 
             } catch (exc: Exception) {
@@ -224,27 +218,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //------------------------------OCR---------------------------
-    /*private fun doOCR(bitmap: Bitmap) {
-        if (mProgressDialog == null) {
-            mProgressDialog = ProgressDialog.show(
-                this, "Processing",
-                "Doing OCR...", true
-            )
-        } else {
-            mProgressDialog!!.show()
-        }
-        Thread {
-            val result: String = mTessOCR!!.getOCRResult(bitmap)
-            runOnUiThread(Runnable { // TODO Auto-generated method stub
-                if (result != null && result != "") {
-                    mResult?.setText(result)
-                }
-                mProgressDialog?.dismiss()
-            })
-        }.start()
-    }*/
-    //-------------------------------------------------------------------
     companion object {
         private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"

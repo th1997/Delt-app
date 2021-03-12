@@ -38,21 +38,30 @@
         android:contentDescription="@string/login" />
     />
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!---<androidx.camera.view.PreviewView
+    android:id="@+id/viewFinder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />-->
 
     <TextView
         android:id="@+id/ocr_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="fill"
         android:layout_margin="4dp"
         android:orientation="horizontal"
         android:text="@string/text"
-        app:layout_constraintEnd_toStartOf="@+id/viewFinder"
+        app:layout_constraintBottom_toTopOf="@+id/camera_capture_button"
         app:layout_constraintTop_toTopOf="parent">
-
+        <!--app:layout_constraintEnd_toStartOf="@+id/viewFinder"-->
     </TextView>
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        app:layout_constraintBottom_toTopOf="@+id/camera_capture_button"
+        app:layout_constraintTop_toBottomOf="@+id/ocr_text" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
