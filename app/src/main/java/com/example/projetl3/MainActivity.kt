@@ -8,14 +8,11 @@ import android.os.Bundle
 import android.util.Log
 import android.util.SparseArray
 import android.view.SurfaceHolder
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -34,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
 
     private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
 
     //---------------------OCR-------------------------
     private lateinit var cameraHolder: SurfaceHolder
@@ -68,29 +64,44 @@ class MainActivity : AppCompatActivity() {
             override fun surfaceCreated(holder: SurfaceHolder) {
                 cameraHolder = surfaceView.holder
 
-                if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(
+                        this@MainActivity,
+                        Manifest.permission.CAMERA
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
                     finish()
                 }
                 cameraSource.start(cameraHolder)
             }
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) { }
-            override fun surfaceDestroyed(holder: SurfaceHolder) { cameraSource.stop() }
+
+            override fun surfaceChanged(
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int
+            ) {
+            }
+
+            override fun surfaceDestroyed(holder: SurfaceHolder) {
+                cameraSource.stop()
+            }
         })
 
         textRecognizer.setProcessor(object : Detector.Processor<TextBlock> {
             override fun release() {}
             override fun receiveDetections(detections: Detector.Detections<TextBlock>) {
                 val items: SparseArray<TextBlock> = detections.detectedItems
-
-                ocr_text.text = (0 until items.size()).joinToString("\n") { items.get(it).value }
-
+                runOnUiThread {
+                    ocr_text.text = (0 until items.size()).joinToString("\n") { items.get(it).value
+                    }
+                }
             }
         })
 
         //--------------------------------------------------
-/*
+
         // Set up the listener for take photo button
-        camera_capture_button.setOnClickListener { takePhoto() }*/
+        camera_capture_button.setOnClickListener { takePhoto() }
 
 
         // Set up the listener for button login page
@@ -98,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
         //outputDirectory = getOutputDirectory()
 
-       // cameraExecutor = Executors.newSingleThreadExecutor()
+       //cameraExecutor = Executors.newSingleThreadExecutor()
 
 
     }
@@ -119,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             outputDirectory,
             SimpleDateFormat(
                 FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) + ".jpg"
+            ).format(System.currentTimeMillis()) + ".bmp"
         )
 
         // Create output options object which contains file + metadata
@@ -143,6 +154,30 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, msg)
                 }
             })
+
+        /*
+        ImageView mImageView = (ImageView) findViewById(R.id.imageView1);
+        TextView textView = (TextView) findViewById(R.id.tvStatus);
+
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case SELECT_PICTURE:
+                    String path = getRealPathFromURI(data.getData());
+                    Log.d("Choose Picture", path);
+                    //Transformer la photo en Bitmap
+                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+                    //Afficher le Bitmap
+                    mImageView.setImageBitmap(bitmap);
+                    //Renseigner les informations status
+                    textView.setText("");
+                    textView.append("Fichier: " + path);
+                    textView.append(System.getProperty("line.separator"));
+                    textView.append("Taille: " + bitmap.getWidth() + "px X " + bitmap.getHeight() + " px");
+                    break;
+            }
+        }
+    }
+        * */
     }
 
     private fun startCamera() {
@@ -188,16 +223,9 @@ class MainActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else filesDir
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        cameraExecutor.shutdown()
+        //cameraExecutor.shutdown()
     }
 
     override fun onRequestPermissionsResult(

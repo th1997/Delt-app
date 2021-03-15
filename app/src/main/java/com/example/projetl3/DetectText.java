@@ -1,9 +1,9 @@
-package com.example.projetl3;
+/*package com.example.projetl3;
 
 
 import android.media.Image;
 
-/*import com.google.cloud.vision.v1.AnnotateImageRequest;
+import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
 import com.google.cloud.vision.v1.EntityAnnotation;
@@ -14,10 +14,10 @@ import com.google.protobuf.ByteString;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;*/
+import java.util.List;
 
 public class DetectText {
-    /*public static void detectText() throws IOException {
+    public static void detectText() throws IOException {
         // TODO(developer): Replace these variables before running the sample.
         String filePath = "path/to/your/image/file.jpg";
         detectText(filePath);
@@ -55,5 +55,5 @@ public class DetectText {
                 }
             }
         }
-    }*/
-}
+    }
+}*/
