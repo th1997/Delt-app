@@ -6,19 +6,17 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.SparseArray
 import android.view.SurfaceHolder
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.vision.CameraSource
-import com.google.android.gms.vision.Detector
-import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -26,6 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //---------------------OCR-------------------------
-        textRecognizer = TextRecognizer.Builder(this).build()
+        /*textRecognizer = TextRecognizer.Builder(this).build()
 
         cameraSource = CameraSource.Builder(this, textRecognizer)
             .setFacing(CameraSource.CAMERA_FACING_BACK)
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 cameraSource.stop()
             }
-        })
+        })*/
 
         //var dt: DetectText = new DetectText();
 
@@ -159,30 +158,10 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, msg)
                 }
             })
-
-        /*
-        ImageView mImageView = (ImageView) findViewById(R.id.imageView1);
-        TextView textView = (TextView) findViewById(R.id.tvStatus);
-
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case SELECT_PICTURE:
-                    String path = getRealPathFromURI(data.getData());
-                    Log.d("Choose Picture", path);
-                    //Transformer la photo en Bitmap
-                    Bitmap bitmap = BitmapFactory.decodeFile(path);
-                    //Afficher le Bitmap
-                    mImageView.setImageBitmap(bitmap);
-                    //Renseigner les informations status
-                    textView.setText("");
-                    textView.append("Fichier: " + path);
-                    textView.append(System.getProperty("line.separator"));
-                    textView.append("Taille: " + bitmap.getWidth() + "px X " + bitmap.getHeight() + " px");
-                    break;
-            }
-        }
-    }
-        * */
+        savedUri = Uri.fromFile(photoFile)
+        val uri = Uri.parse(savedUri.toString())
+        val fi = File(uri.path)
+        val dt: DetectText = DetectText("/storage/emulated/0/Android/media/com.example.projetl3/ProjetL3/2021-05-10-22-47-23-303.bmp");//fi.toString());
     }
 
     private fun startCamera() {
@@ -193,11 +172,11 @@ class MainActivity : AppCompatActivity() {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
-            /*val preview = Preview.Builder()
+            val preview = Preview.Builder()
                 .build()
                 .also {
                     it.setSurfaceProvider(viewFinder.surfaceProvider)
-                }*/
+                }
 
             imageCapture = ImageCapture.Builder()
                 .build()
@@ -211,8 +190,8 @@ class MainActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, //preview,
-                    imageCapture
+                    this, cameraSelector, preview
+                    ,imageCapture
                 )
 
             } catch (exc: Exception) {

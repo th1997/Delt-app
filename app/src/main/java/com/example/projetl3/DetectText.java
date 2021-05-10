@@ -21,7 +21,7 @@ public class DetectText {
     }*/
 
     // Detects text in the specified image.
-    public void DetectText(String filePath) throws IOException {
+    public DetectText(String filePath) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));

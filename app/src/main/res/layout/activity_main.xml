@@ -53,8 +53,8 @@
         android:orientation="horizontal"
         android:text="@string/text"
         app:layout_constraintBottom_toTopOf="@+id/camera_capture_button"
-        app:layout_constraintTop_toTopOf="parent">
-        <!--app:layout_constraintEnd_toStartOf="@+id/viewFinder"-->
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/viewFinder">
     </TextView>
 
     <SurfaceView
