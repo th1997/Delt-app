@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
 
     private lateinit var outputDirectory: File
+    private lateinit var cameraExecutor: ExecutorService
+
 
     //---------------------OCR-------------------------
     private lateinit var cameraHolder: SurfaceHolder
@@ -87,16 +89,19 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        textRecognizer.setProcessor(object : Detector.Processor<TextBlock> {
+        //var dt: DetectText = new DetectText();
+
+        /*textRecognizer.setProcessor(object : Detector.Processor<TextBlock> {
             override fun release() {}
             override fun receiveDetections(detections: Detector.Detections<TextBlock>) {
                 val items: SparseArray<TextBlock> = detections.detectedItems
                 runOnUiThread {
-                    ocr_text.text = (0 until items.size()).joinToString("\n") { items.get(it).value
+                    ocr_text.text = (0 until items.size()).joinToString("\n"){
+                        items.get(0).value
                     }
                 }
             }
-        })
+        })*/
 
         //--------------------------------------------------
 
@@ -107,9 +112,9 @@ class MainActivity : AppCompatActivity() {
         // Set up the listener for button login page
         login_button.setOnClickListener { switchToLoginPage() }
 
-        //outputDirectory = getOutputDirectory()
+        /*COM*/outputDirectory = getOutputDirectory()
 
-       //cameraExecutor = Executors.newSingleThreadExecutor()
+       /*COM*/cameraExecutor = Executors.newSingleThreadExecutor()
 
 
     }
@@ -244,6 +249,14 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun getOutputDirectory(): File {
+        val mediaDir = externalMediaDirs.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else filesDir
     }
 
     companion object {

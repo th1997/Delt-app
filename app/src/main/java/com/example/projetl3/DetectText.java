@@ -1,7 +1,4 @@
-/*package com.example.projetl3;
-
-
-import android.media.Image;
+package com.example.projetl3;
 
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
@@ -17,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DetectText {
-    public static void detectText() throws IOException {
+    /*public static void detectText() throws IOException {
         // TODO(developer): Replace these variables before running the sample.
         String filePath = "path/to/your/image/file.jpg";
         detectText(filePath);
-    }
+    }*/
 
     // Detects text in the specified image.
-    public static void detectText(String filePath) throws IOException {
+    public void DetectText(String filePath) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
@@ -56,4 +53,4 @@ public class DetectText {
             }
         }
     }
-}*/
+}
