@@ -16,8 +16,6 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.vision.CameraSource
-import com.google.android.gms.vision.text.TextRecognizer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -34,9 +32,12 @@ class MainActivity : AppCompatActivity() {
 
 
     //---------------------OCR-------------------------
+
     private lateinit var cameraHolder: SurfaceHolder
+    /*
     private lateinit var cameraSource: CameraSource
     private lateinit var textRecognizer: TextRecognizer
+     */
     //--------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
