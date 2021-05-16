@@ -1,5 +1,13 @@
 package com.example.projetl3;
 
+import android.app.usage.NetworkStats;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
@@ -7,18 +15,19 @@ import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.protobuf.ByteString;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetectText {
-    /*public static void detectText() throws IOException {
-        // TODO(developer): Replace these variables before running the sample.
+public class DetectText extends AppCompatActivity {
+    public DetectText() throws IOException {
+        /* TODO(developer): Replace these variables before running the sample.
         String filePath = "path/to/your/image/file.jpg";
-        detectText(filePath);
-    }*/
+        DetectText(filePath);*/
+    }
 
     // Detects text in the specified image.
     public DetectText(String filePath) throws IOException {

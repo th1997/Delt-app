@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         savedUri = Uri.fromFile(photoFile)
         val uri = Uri.parse(savedUri.toString())
         val fi = File(uri.path)
-        val dt: DetectText = DetectText("/storage/emulated/0/Android/media/com.example.projetl3/ProjetL3/2021-05-10-22-47-23-303.bmp");//fi.toString());
+        val dt = DetectText("/storage/emulated/0/Android/media/com.example.projetl3/ProjetL3/2021-05-14-23-59-35-805.bmp")//fi.toString())
     }
 
     private fun startCamera() {
