@@ -1,21 +1,22 @@
-package com.example.projetl3
+package fr.projetl3.deltapp
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.projetl3.R
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -29,7 +30,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-
 
     //---------------------OCR-------------------------
 
@@ -106,7 +106,10 @@ class MainActivity : AppCompatActivity() {
         //--------------------------------------------------
 
         // Set up the listener for take photo button
-        camera_capture_button.setOnClickListener { takePhoto() }
+        camera_capture_button.setOnClickListener {
+            // Get a stable reference of the modifiable image capture use case
+            takePhoto()
+        }
 
 
         // Set up the listener for button login page
@@ -148,21 +151,52 @@ class MainActivity : AppCompatActivity() {
             outputOptions,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
-                override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                }
+                override fun onError(exc: ImageCaptureException) { Log.e(TAG, "Photo capture failed: ${exc.message}", exc) }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     savedUri = Uri.fromFile(photoFile)
-                    val msg = "Photo enregistrée( $savedUri )"
+                    var msg = "Photo enregistrée( $savedUri )"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                    try {
+                        val fichier = File(savedUri.path.toString())
+                        ////fi.toString()) //"/storage/emulated/0/Android/media/com.example.projetl3/ProjetL3/2021-05-14-23-59-35-805.bmp"
+                        Thread.sleep(1000)
+                        msg = fichier.absolutePath.toString()
+                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                        if(fichier.exists()){
+                            val myBitmap : Bitmap = BitmapFactory.decodeFile(fichier.getAbsolutePath())
+                            msg = "Bytmap = $myBitmap"
+                            pictureTaken.setImageBitmap(myBitmap)
+                            pictureTaken.visibility = View.VISIBLE
+                            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                        }
+
+                    } catch (e: Exception){
+                        val msgError = "Erreur [$e]"
+                        Toast.makeText(baseContext, msgError, Toast.LENGTH_SHORT).show()
+                    }
                     Log.d(TAG, msg)
                 }
             })
+    /*
         savedUri = Uri.fromFile(photoFile)
         val uri = Uri.parse(savedUri.toString())
         val fi = File(uri.path)
-        val dt = DetectText("/storage/emulated/0/Android/media/com.example.projetl3/ProjetL3/2021-05-14-23-59-35-805.bmp")//fi.toString())
+        var read : Boolean = false
+        while(!read){
+            try {
+                val dt = DetectText(fi.toString())//fi.toString()) //"/storage/emulated/0/Android/media/com.example.projetl3/ProjetL3/2021-05-14-23-59-35-805.bmp"
+                read = true
+            } catch (e: Exception){
+                val msgError = "Erreur [$e]"
+                Toast.makeText(baseContext, msgError, Toast.LENGTH_SHORT).show()
+            }
+        }
+        val msgPass = "Le fichier à bien été lu."
+        Toast.makeText(baseContext, msgPass, Toast.LENGTH_SHORT).show()
+*/
+
+
     }
 
     private fun startCamera() {

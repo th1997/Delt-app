@@ -5,7 +5,7 @@
     android:id="@+id/LoginPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginApp">
+    tools:context="fr.projetl3.deltapp.LoginApp">
 
     <EditText
         android:id="@+id/UsernameText"

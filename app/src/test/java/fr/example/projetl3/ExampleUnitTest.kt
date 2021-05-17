@@ -1,4 +1,4 @@
-package com.example.projetl3
+package fr.example.projetl3
 
 import org.junit.Test
 

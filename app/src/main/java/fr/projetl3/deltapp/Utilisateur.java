@@ -1,6 +1,4 @@
-package com.example.projetl3;
-
-import org.jetbrains.annotations.NotNull;
+package fr.projetl3.deltapp;
 
 public class Utilisateur {
     public String email, nom, prenom;
