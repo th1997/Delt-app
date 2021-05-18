@@ -98,11 +98,11 @@ public class RegisterApp extends AppCompatActivity {
     }
 
     private void register() {
-        String emailText = email.getText().toString();
-        String nomText = nom.getText().toString();
-        String prenomText = prenom.getText().toString();
-        String pwd1Text = pwd1.getText().toString();
-        String pwd2Text = pwd2.getText().toString();
+        String emailText = email.getText().toString().trim();
+        String nomText = nom.getText().toString().trim();
+        String prenomText = prenom.getText().toString().trim();
+        String pwd1Text = pwd1.getText().toString().trim();
+        String pwd2Text = pwd2.getText().toString().trim();
         if(emailText.isEmpty()){
             changeVisibility();
             email.setError("Veuillez remplir ce champ");
