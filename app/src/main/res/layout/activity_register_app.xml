@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/iprenom"
+    android:id="@+id/registerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/dark"
     tools:context="fr.projetl3.deltapp.RegisterApp">
 
     <ImageButton
@@ -31,14 +32,15 @@
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="Mot de passe"
+        android:hint="@string/passwordText"
         android:inputType="textPassword"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nomRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/nomRegister"
+        android:importantForAutofill="no"/>
 
     <EditText
         android:id="@+id/pwd2Register"
@@ -46,17 +48,18 @@
         android:layout_height="51dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/text_border"
-        android:backgroundTint="#282a2b"
+        android:backgroundTint="@color/mineshaft"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="Vérification de MDP"
+        android:hint="@string/passwordText2"
         android:inputType="textPassword"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pwd1Register" />
+        app:layout_constraintTop_toBottomOf="@+id/pwd1Register"
+        android:importantForAutofill="no"/>
 
     <EditText
         android:id="@+id/emailRegister"
@@ -66,7 +69,7 @@
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="Adresse mail"
+        android:hint="@string/emailText"
         android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -75,7 +78,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_go_to_main"
-        app:layout_constraintVertical_bias="0.13" />
+        app:layout_constraintVertical_bias="0.127"
+        android:importantForAutofill="no"/>
 
     <EditText
         android:id="@+id/nomRegister"
@@ -86,7 +90,7 @@
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="Nom"
+        android:hint="@string/nomText"
         android:inputType="textPersonName"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -95,7 +99,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prenomRegister"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/prenomRegister"
@@ -106,20 +111,21 @@
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="Prénom"
+        android:hint="@string/prenomText"
         android:inputType="textPersonName"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/emailRegister"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Déja un compte? Connecte-toi !"
+        android:text="@string/alreadyRegistered"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="18sp"
@@ -136,7 +142,7 @@
         android:layout_width="214dp"
         android:layout_height="56dp"
         android:backgroundTint="#FF5722"
-        android:text="S'inscrire"
+        android:text="@string/registerButtonText"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
@@ -149,15 +155,14 @@
 
     <ProgressBar
         android:id="@+id/progressBarRegister"
-        style="?android:attr/progressBarStyle"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
         android:layout_width="117dp"
         android:layout_height="102dp"
         android:layout_marginTop="16dp"
         android:indeterminateTint="@color/colorPrimaryDark"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

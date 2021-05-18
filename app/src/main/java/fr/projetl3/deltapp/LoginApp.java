@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,8 +39,6 @@ public class LoginApp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_app);
-        View view = this.getWindow().getDecorView();
-        view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
         setupUIView();
         mAuth = FirebaseAuth.getInstance();
         retour.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +85,19 @@ public class LoginApp extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
-                        Toast.makeText(LoginApp.this, "Connexion à votre compte réussi!", Toast.LENGTH_LONG).show();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if(user != null && user.isEmailVerified()){
+                            Toast.makeText(LoginApp.this, "Connexion à votre compte réussi!", Toast.LENGTH_LONG).show();
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(getApplicationContext(), Account.class));
+                                }
+                            },3000);
+                        } else {
+                            Toast.makeText(LoginApp.this, "Vous devez vérifier votre adresse mail, un email vous a été envoyé lors de votre inscription!", Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         Toast.makeText(LoginApp.this, "Erreur lors de la connexion : " + task.getException(), Toast.LENGTH_LONG).show();
                     }

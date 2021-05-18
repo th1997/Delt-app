@@ -17,6 +17,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.projetl3.R
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -53,56 +54,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        //---------------------OCR-------------------------
-        /*textRecognizer = TextRecognizer.Builder(this).build()
-
-        cameraSource = CameraSource.Builder(this, textRecognizer)
-            .setFacing(CameraSource.CAMERA_FACING_BACK)
-            .setAutoFocusEnabled(true)
-            .setRequestedFps(3.0f)
-            .build()
-
-        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                cameraHolder = surfaceView.holder
-
-                if (ActivityCompat.checkSelfPermission(
-                        this@MainActivity,
-                        Manifest.permission.CAMERA
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    finish()
-                }
-                cameraSource.start(cameraHolder)
-            }
-
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder) {
-                cameraSource.stop()
-            }
-        })*/
-
-        //var dt: DetectText = new DetectText();
-
-        /*textRecognizer.setProcessor(object : Detector.Processor<TextBlock> {
-            override fun release() {}
-            override fun receiveDetections(detections: Detector.Detections<TextBlock>) {
-                val items: SparseArray<TextBlock> = detections.detectedItems
-                runOnUiThread {
-                    ocr_text.text = (0 until items.size()).joinToString("\n"){
-                        items.get(0).value
-                    }
-                }
-            }
-        })*/
-
         //--------------------------------------------------
 
         // Set up the listener for take photo button
@@ -123,10 +74,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchToLoginPage(){
-        //
-        val otherActivity = Intent(this, LoginApp::class.java)
-        startActivity(otherActivity)
-        finish()
+        try {
+            val user = FirebaseAuth.getInstance().currentUser
+            if(user == null){
+                val otherActivity = Intent(this, LoginApp::class.java)
+                startActivity(otherActivity)
+            } else {
+                val otherActivity = Intent(this, Account::class.java)
+                startActivity(otherActivity)
+            }
+            finish()
+        } catch (e: Exception){
+            Toast.makeText(baseContext, e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun takePhoto() {

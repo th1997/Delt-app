@@ -1,7 +1,30 @@
 <resources>
-    <string name="app_name">ProjetL3</string>
+    <string name="app_name">Delt\'app</string>
     <string name="retour">Retour page d\'accueil</string>
     <string name="login">Login</string>
     <string name="text">text</string>
+
+    <!-- Register/Login page String -->
+    <string name="emailText">Adresse mail</string>
+    <string name="prenomText">Prénom</string>
+    <string name="nomText">Nom</string>
+    <string name="passwordText">Mot de passe</string>
+    <string name="passwordText2">Vérification MDP</string>
+    <string name="registerButtonText">S\'inscrire</string>
+    <string name="loginButtonText">Se connecter</string>
+    <string name="alreadyRegistered">Déja un compte? Connecte-toi !</string>
+    <string name="noAccount">Pas encore inscrit? Inscris-toi !</string>
+    <string name="account_title">VOTRE COMPTE</string>
+    <string name="disconnectAccount">Se déconnecter</string>
+
+    <!-- Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="dark">#0B0811</color>
+    <color name="red">#fd0000</color>
+    <color name="temptress">#430012</color>
+    <color name="revolver">#231a34</color>
+    <color name="firefly">#133337</color>
+    <color name="mineshaft">#302d2d</color>
 
 </resources>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -41,8 +42,7 @@ public class RegisterApp extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_register_app);
-        View view = this.getWindow().getDecorView();
-        view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+        //View view = this.getWindow().getDecorView(); view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
         setupUIViews();
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +141,15 @@ public class RegisterApp extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !", Toast.LENGTH_LONG).show();
+                                        mAuth.getCurrentUser().sendEmailVerification();
+                                        Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                startActivity(new Intent(getApplicationContext(), LoginApp.class));
+                                            }
+                                        },3000);
                                     } else {
                                         Toast.makeText(RegisterApp.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                     }
