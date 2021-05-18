@@ -7,32 +7,45 @@
     android:layout_height="match_parent"
     tools:context="fr.projetl3.deltapp.LoginApp">
 
+    <ImageButton
+        android:id="@+id/btn_go_to_main"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:backgroundTint="#FF5722"
+        android:contentDescription="Retour sur la page d'accueil !"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.005"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/abc_vector_test"
+        tools:ignore="HardcodedText" />
+
     <EditText
-        android:id="@+id/UsernameText"
-        android:layout_width="355dp"
-        android:layout_height="56dp"
-        android:autofillHints=""
+        android:id="@+id/emailLogin"
+        android:layout_width="341dp"
+        android:layout_height="52dp"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
         android:ems="10"
-        android:hint="E-mail"
+        android:hint="Adresse mail"
         android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_go_to_main"
-        app:layout_constraintVertical_bias="0.193"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.13" />
 
     <EditText
-        android:id="@+id/PasswordText"
-        android:layout_width="355dp"
-        android:layout_height="59dp"
-        android:autofillHints=""
+        android:id="@+id/pwdLogin"
+        android:layout_width="337dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
@@ -42,59 +55,41 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/UsernameText"
-        app:layout_constraintVertical_bias="0.103"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toBottomOf="@+id/emailLogin" />
+
+
+    <TextView
+        android:id="@+id/tvRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pas encore inscrit? Inscris-toi !"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+        app:layout_constraintVertical_bias="0.302" />
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="212dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="196dp"
+        android:layout_width="214dp"
+        android:layout_height="56dp"
         android:backgroundTint="#FF5722"
         android:text="Se connecter"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.698"
-        tools:ignore="HardcodedText" />
-
-    <ImageButton
-        android:id="@+id/btn_go_to_main"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="4dp"
-        android:backgroundTint="#FF5722"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.023"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/abc_vector_test"
-        android:contentDescription="@string/retour" />
-
-    <TextView
-        android:id="@+id/tvRegister"
-        android:layout_width="322dp"
-        android:layout_height="75dp"
-        android:layout_marginBottom="40dp"
-        android:text="Pas encore inscrit? Inscris-toi !"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin"
-        app:layout_constraintVertical_bias="0.97"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.837"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

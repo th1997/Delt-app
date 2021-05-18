@@ -80,23 +80,40 @@ public class RegisterApp extends AppCompatActivity {
         progressBar = (ProgressBar)findViewById(R.id.progressBarRegister);
     }
 
+    private void changeVisibility(){
+        Toast.makeText(RegisterApp.this, "Changing visibility", Toast.LENGTH_LONG).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(progressBar.getVisibility() == View.GONE){
+                    progressBar.setVisibility(View.VISIBLE);
+                    Toast.makeText(RegisterApp.this, "Set to visible : " + progressBar.getVisibility(), Toast.LENGTH_LONG).show();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(RegisterApp.this, "Set to invisible : " + progressBar.getVisibility(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
     private void register() {
         String emailText = email.getText().toString();
         String nomText = nom.getText().toString();
         String prenomText = prenom.getText().toString();
         String pwd1Text = pwd1.getText().toString();
         String pwd2Text = pwd2.getText().toString();
-
         if(emailText.isEmpty()){
+            changeVisibility();
             email.setError("Veuillez remplir ce champ");
             email.requestFocus();
         } else if(!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()){
             email.setError("Email invalide");
             email.requestFocus();
-            progressBar.setVisibility(View.INVISIBLE);
         } else if(nomText.isEmpty()){
             nom.setError("Veuillez remplir ce champ");
             nom.requestFocus();
+
         } else if(prenomText.isEmpty()){
             prenom.setError("Veuillez remplir ce champ");
             prenom.requestFocus();
@@ -112,14 +129,6 @@ public class RegisterApp extends AppCompatActivity {
             pwd2.setError("Les mot de passe doivent correspondre");
             pwd2.requestFocus();
         }  else {
-            progressBar = (ProgressBar) findViewById(R.id.progressBarRegister);
-            progressBar.setVisibility(View.VISIBLE);
-            try {
-                Toast.makeText(RegisterApp.this, "Visibility = " + progressBar.getVisibility(), Toast.LENGTH_LONG).show();
-            } catch (Exception e){
-                Toast.makeText(RegisterApp.this, "User data creation failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-
             try {
                 mAuth.createUserWithEmailAndPassword(emailText, pwd1Text).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -140,18 +149,15 @@ public class RegisterApp extends AppCompatActivity {
                             });
 
                         } else {
-                            Toast.makeText(RegisterApp.this, "Erreur lors de l'inscription, veuillez réessayer!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterApp.this, "Erreur lors de l'inscription, veuillez réessayer! " + task.getException(), Toast.LENGTH_LONG).show();
                             //progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 });
-                progressBar.setVisibility(View.INVISIBLE);
             } catch (Exception e){
                 Toast.makeText(RegisterApp.this, "User data creation failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
-                progressBar.setVisibility(View.INVISIBLE);
             }
-            progressBar.setVisibility(View.INVISIBLE);
-
         }
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

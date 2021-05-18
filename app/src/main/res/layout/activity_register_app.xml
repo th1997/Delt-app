@@ -26,6 +26,7 @@
         android:id="@+id/pwd1Register"
         android:layout_width="337dp"
         android:layout_height="50dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
@@ -35,16 +36,15 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tvLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nomRegister"
-        app:layout_constraintVertical_bias="0.068" />
+        app:layout_constraintTop_toBottomOf="@+id/nomRegister" />
 
     <EditText
         android:id="@+id/pwd2Register"
         android:layout_width="338dp"
         android:layout_height="51dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
@@ -54,38 +54,34 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tvLogin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.479"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pwd1Register"
-        app:layout_constraintVertical_bias="0.079" />
+        app:layout_constraintTop_toBottomOf="@+id/pwd1Register" />
 
     <EditText
         android:id="@+id/emailRegister"
         android:layout_width="341dp"
         android:layout_height="52dp"
-        android:ems="10"
-        android:hint="Adresse mail"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
+        android:ems="10"
+        android:hint="Adresse mail"
         android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_go_to_main"
-        app:layout_constraintVertical_bias="0.095" />
+        app:layout_constraintVertical_bias="0.13" />
 
     <EditText
         android:id="@+id/nomRegister"
         android:layout_width="341dp"
         android:layout_height="55dp"
-        android:layout_marginBottom="316dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
@@ -97,16 +93,15 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tvLogin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.471"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prenomRegister"
-        app:layout_constraintVertical_bias="0.809" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/prenomRegister"
         android:layout_width="338dp"
         android:layout_height="53dp"
-        android:layout_marginBottom="392dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/text_border"
         android:backgroundTint="#282a2b"
         android:backgroundTintMode="screen"
@@ -116,12 +111,9 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tvLogin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.479"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailRegister"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/emailRegister" />
 
     <TextView
         android:id="@+id/tvLogin"
@@ -160,13 +152,12 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="117dp"
         android:layout_height="102dp"
-        android:layout_marginBottom="12dp"
-        android:visibility="visible"
+        android:layout_marginTop="16dp"
         android:indeterminateTint="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toTopOf="@+id/emailRegister"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.842" />
+        tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
