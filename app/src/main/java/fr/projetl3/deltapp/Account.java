@@ -1,8 +1,15 @@
 package fr.projetl3.deltapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.projetl3.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,18 +20,25 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Account extends AppCompatActivity {
     private ImageButton retour;
     private Button disconnect;
     private TextView email, prenom, nom;
     private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private String user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        user_id = user.getUid();
         setupUI();
+        loadUserProfile();
         disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,6 +52,34 @@ public class Account extends AppCompatActivity {
                 Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(mainActivity);
                 finish();
+            }
+        });
+    }
+
+    private void loadUserProfile() {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference usersRef = rootRef.child("users");
+
+        usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                User userProfile = snapshot.getValue(User.class);
+                if(userProfile != null){
+                    String emailProfile = userProfile.getEmail();
+                    String prenomProfile = userProfile.getPrenom();
+                    String nomProfile = userProfile.getNom();
+
+                    email.setText("Adresse mail: " + emailProfile);
+                    prenom.setText("Prénom: " + prenomProfile);
+                    nom.setText("Nom: " + nomProfile);
+                } else {
+                    Toast.makeText(Account.this, "Couldn't load user class profile!", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Toast.makeText(Account.this, "Couldn't load profile! ", Toast.LENGTH_LONG).show();
             }
         });
     }
