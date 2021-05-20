@@ -1,4 +1,4 @@
-package fr.example.projetl3
+package fr.projetl3.deltapp
 
 import org.junit.Test
 

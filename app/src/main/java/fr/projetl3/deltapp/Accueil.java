@@ -1,32 +1,54 @@
 package fr.projetl3.deltapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.projetl3.R;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import fr.projetl3.deltapp.maths.Equation2Degre;
 
 public class Accueil extends AppCompatActivity {
 
+
     private ImageButton login, menu, basics, eq2nd;
     private EditText inputCalc;
-    private Button camera, calc;
+    private Button camera_button, calc;
     private TextView title, basics_title, eq2nd_title, result;
+    private ImageView camera_capture, click_here;
+    private ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private boolean isModuleSelected = false;
     private String moduleSelected;
+
+
 
 
     @Override
@@ -36,6 +58,11 @@ public class Accueil extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         setupUI();
+        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(Accueil.this, new String[]{
+                    Manifest.permission.CAMERA
+            }, 100);
+        }
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,12 +75,13 @@ public class Accueil extends AppCompatActivity {
             }
         });
 
-        camera.setOnClickListener(new View.OnClickListener() {
+        camera_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isModuleSelected){
                     // Prend photo blabla
                     Toast.makeText(Accueil.this, "Wow une photo!", Toast.LENGTH_SHORT).show();
+                    turnCameraON();
                 } else {
                     Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
                 }
@@ -69,7 +97,7 @@ public class Accueil extends AppCompatActivity {
                     isModuleSelected = false;
                     switchUIvisibility();
                     moduleSelected = "SÉLECTION DU MODULE";
-                    camera.setBackgroundResource(R.drawable.rounded_button_disabled);
+                    camera_button.setBackgroundResource(R.drawable.rounded_button_disabled);
                     title.setText(moduleSelected);
                 } else {
                     Toast.makeText(Accueil.this, "Vous êtes déjà sur le menu de selection de module", Toast.LENGTH_SHORT).show();
@@ -85,7 +113,7 @@ public class Accueil extends AppCompatActivity {
                 isModuleSelected = true;
                 switchUIvisibility();
                 title.setText(moduleSelected);
-                camera.setBackgroundResource(R.drawable.rounded_button);
+                camera_button.setBackgroundResource(R.drawable.rounded_button);
             }
         });
 
@@ -96,7 +124,7 @@ public class Accueil extends AppCompatActivity {
                 isModuleSelected = true;
                 switchUIvisibility();
                 title.setText(moduleSelected);
-                camera.setBackgroundResource(R.drawable.rounded_button);
+                camera_button.setBackgroundResource(R.drawable.rounded_button);
             }
         });
 
@@ -113,12 +141,14 @@ public class Accueil extends AppCompatActivity {
         });
     }
 
+
     private void setupUI(){
         login = (ImageButton) findViewById(R.id.login_button_accueil);
         menu = (ImageButton) findViewById(R.id.menu_button_accueil);
         basics = (ImageButton) findViewById(R.id.basic_maths_button);
         eq2nd = (ImageButton) findViewById(R.id.equation_2nd_button);
-        camera = (Button) findViewById(R.id.camera_capture_button_accueil);
+        camera_button = (Button) findViewById(R.id.camera_capture_button_accueil);
+        click_here = (ImageView) findViewById(R.id.iv_click_here);
 
         title = (TextView) findViewById(R.id.tv_module_title);
         basics_title = (TextView) findViewById(R.id.tv_basic_maths);
@@ -127,6 +157,9 @@ public class Accueil extends AppCompatActivity {
         inputCalc = (EditText) findViewById(R.id.input_calc);
         calc = (Button) findViewById(R.id.calc_button);
         result = (TextView) findViewById(R.id.tv_result);
+
+        camera_capture = (ImageView) findViewById(R.id.iv_camera_capture);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarAnalyse);
 
         basics.setVisibility(View.VISIBLE);
         basics_title.setVisibility(View.VISIBLE);
@@ -143,6 +176,7 @@ public class Accueil extends AppCompatActivity {
             inputCalc.setVisibility(View.VISIBLE);
             calc.setVisibility(View.VISIBLE);
             result.setVisibility(View.VISIBLE);
+            click_here.setVisibility(View.VISIBLE);
 
         } else {
             basics.setVisibility(View.VISIBLE);
@@ -153,17 +187,21 @@ public class Accueil extends AppCompatActivity {
             inputCalc.setVisibility(View.GONE);
             calc.setVisibility(View.GONE);
             result.setVisibility(View.GONE);
+            camera_capture.setVisibility(View.GONE);
+            click_here.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         }
 
     }
-
     private void calcul(){
         if(isModuleSelected){
             switch (moduleSelected){
                 case "Équation 2nd degré":
                     try {
+                        progressBar.setVisibility(View.GONE);
+                        camera_capture.setVisibility(View.GONE);
                         String equationText = inputCalc.getText().toString().trim();
-                        Equation2Degre eq = new Equation2Degre(equationText);
+                        Equation2Degre eq = new Equation2Degre(equationText, Accueil.this);
                         result.setText(equationText + "\n" + eq.toString() + "\n" + eq.result());
                     }catch (Exception e){
                         Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -179,5 +217,59 @@ public class Accueil extends AppCompatActivity {
         } else {
             Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void turnCameraON(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 100);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            Bitmap captureImage = (Bitmap) data.getExtras().get("data");
+            File file = null;
+            try {
+                file = savebitmap(captureImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(file != null && file.exists()){
+                Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
+                try {
+                    Toast.makeText(Accueil.this, file.getPath(), Toast.LENGTH_LONG).show();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                if(file == null){
+                    Toast.makeText(Accueil.this, "File = null", Toast.LENGTH_LONG).show();
+                } else{
+                    Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
+
+                }
+            }
+
+
+            camera_capture.setImageBitmap(captureImage);
+            camera_capture.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            click_here.setVisibility(View.GONE);
+        }
+    }
+
+    private File savebitmap(Bitmap bmp) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 60, bytes);
+        File f = new File(Environment.getExternalStorageDirectory()
+                + File.separator + "testimage.jpg");
+        if(f.createNewFile()){
+            Toast.makeText(Accueil.this, "Photo enregistré! " + f.getPath(), Toast.LENGTH_LONG).show();
+        }
+        FileOutputStream fo = new FileOutputStream(f);
+        fo.write(bytes.toByteArray());
+        fo.close();
+        return f;
     }
 }

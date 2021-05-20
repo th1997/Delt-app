@@ -1,44 +1,56 @@
 package fr.projetl3.deltapp.maths;
 
 
+import android.widget.Toast;
+
+import fr.projetl3.deltapp.Accueil;
+
 public class Equation2Degre {
+    Accueil instance;
     String equation;
     long[] tab;
 
 
-    public Equation2Degre(String eq){
+    public Equation2Degre(String eq, Accueil instanceAccueil){
         equation = "";
         tab = new long[3];
+        instance = instanceAccueil;
         construireTabEquation(eq);
         construireEquationSimplifier();
     }
 
-    private void StringToTab(String str, long[] tab){
+    private void StringToTab(String str, long[] tab, boolean negatif){
         long val;
         String tmp;
         if(str.contains("x2")){
-            tmp = str.replaceAll("x2", "");
-            if(str.contains("x")){ System.out.println("Erreur string tmp"); return;}// Erreur string temporaire
+            tmp = str.replaceAll("x2", ""); tmp = tmp.replaceAll("X2", "");
+            if(tmp.contains("x")){ Toast.makeText(instance, "Erreur " + tmp, Toast.LENGTH_SHORT).show(); return;}// Erreur string temporaire
             try {
                 val = Long.parseLong(tmp);
+                if(negatif){val *= -1;}
                 tab[2] += val;
+                Toast.makeText(instance, "Ajout de " + val + "dans x2", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                System.out.println(e.getMessage()); return;
+                Toast.makeText(instance, e.getMessage(), Toast.LENGTH_SHORT).show(); return;
             }
         } else if(str.contains("x")){
-            tmp = str.replaceAll("x", "");
+            tmp = str.replaceAll("x", ""); tmp = tmp.replaceAll("X", "");
             try {
                 val = Long.parseLong(tmp);
+                if(negatif){val *= -1;}
                 tab[1] += val;
+                Toast.makeText(instance, "Ajout de " + val + "dans x", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                System.out.println(e.getMessage()); return;
+                Toast.makeText(instance, e.getMessage(), Toast.LENGTH_SHORT).show();; return;
             }
         } else {
             try {
                 val = Long.parseLong(str);
+                if(negatif){val *= -1;}
                 tab[0] += val;
+                Toast.makeText(instance, "Ajout de " + val, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                System.out.println(e.getMessage()); return;
+                Toast.makeText(instance, e.getMessage(), Toast.LENGTH_SHORT).show();; return;
             }
         }
     }
@@ -56,34 +68,34 @@ public class Equation2Degre {
 
             for(int i = 0; i < before.length(); i++){
                 if(before.charAt(i) == '+'){
-                    StringToTab(tmp, tab);
+                    StringToTab(tmp, tab, false);
                     tmp = "";
                 } else if(before.charAt(i) == '-' && i != 0){
-                    StringToTab(tmp, tab);
+                    StringToTab(tmp, tab, false);
                     tmp = "-";
                 } else if(before.charAt(i) == '='){
-                    StringToTab(tmp, tab);
+                    StringToTab(tmp, tab, false);
+                    tmp = "";
                 } else { //
                     tmp = tmp.concat(String.valueOf(before.charAt(i)));
                     if(i == before.length()-1){
-                        StringToTab(tmp, tab);
+                        StringToTab(tmp, tab, false);
                     }
                 }
             }
-            tmp = "";
             for(int i = 0; i < after.length(); i++){
                 if(after.charAt(i) == '+'){
-                    StringToTab(tmp, tab);
+                    StringToTab(tmp, tab, true);
                     tmp = "";
                 } else if(after.charAt(i) == '-' && i != 0){
-                    StringToTab(tmp, tab);
+                    StringToTab(tmp, tab, true);
                     tmp = "-";
                 } else if(after.charAt(i) == '='){
-                    StringToTab(tmp, tab);
+                    StringToTab(tmp, tab, true);
                 } else { //
                     tmp = tmp.concat(String.valueOf(after.charAt(i)));
                     if(i == after.length()-1){
-                        StringToTab(tmp, tab);
+                        StringToTab(tmp, tab, true);
                     }
                 }
             }
@@ -96,7 +108,7 @@ public class Equation2Degre {
     private void construireEquationSimplifier(){
         long a = tab[2], b = tab[1], c = tab[0];
         equation = equation.concat(a + "x² ");
-        if(b > 0){equation = equation.concat("+" + b + "x "); } else {equation = equation.concat(b + " ");}
+        if(b > 0){equation = equation.concat("+" + b + "x "); } else {equation = equation.concat(b + "x ");}
         if(c > 0){equation = equation.concat("+" + c + " "); } else {equation = equation.concat(c + " ");}
         equation = equation.concat("= 0");
 
