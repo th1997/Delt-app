@@ -17,6 +17,12 @@
     <string name="account_title">VOTRE COMPTE</string>
     <string name="disconnectAccount">Se déconnecter</string>
 
+    <!-- Accueil -->
+    <string name="module_equation_2nd">Équation du 2nd degré</string>
+    <string name="module_basic_maths">Calculs basiques (+-*/)</string>
+    <string name="modules_selection_title">SÉLECTION DU MODULE</string>
+    <string name="calculer_button">Calculer</string>
+
     <!-- Colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
@@ -26,5 +32,6 @@
     <color name="revolver">#231a34</color>
     <color name="firefly">#133337</color>
     <color name="mineshaft">#302d2d</color>
+    <color name="laspalmas">#D0ED12</color>
 
 </resources>

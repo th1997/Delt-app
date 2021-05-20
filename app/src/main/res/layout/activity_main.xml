@@ -38,6 +38,7 @@
         android:contentDescription="@string/login" />
     />
 
+
     <!---COM-->
     <androidx.camera.view.PreviewView
     android:id="@+id/viewFinder"

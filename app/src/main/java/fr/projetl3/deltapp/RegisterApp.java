@@ -44,6 +44,7 @@ public class RegisterApp extends AppCompatActivity {
         setContentView(R.layout.activity_register_app);
         //View view = this.getWindow().getDecorView(); view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
         setupUIViews();
+
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,10 +54,9 @@ public class RegisterApp extends AppCompatActivity {
             }
         });
         bRegister.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                register();
-            }
+            public void onClick(View v) { register(); }
         });
 
         userLoginPage.setOnClickListener(new View.OnClickListener() {
@@ -80,31 +80,15 @@ public class RegisterApp extends AppCompatActivity {
         progressBar = (ProgressBar)findViewById(R.id.progressBarRegister);
     }
 
-    private void changeVisibility(){
-        Toast.makeText(RegisterApp.this, "Changing visibility", Toast.LENGTH_LONG).show();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(progressBar.getVisibility() == View.GONE){
-                    progressBar.setVisibility(View.VISIBLE);
-                    Toast.makeText(RegisterApp.this, "Set to visible : " + progressBar.getVisibility(), Toast.LENGTH_LONG).show();
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(RegisterApp.this, "Set to invisible : " + progressBar.getVisibility(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-    }
 
     private void register() {
+
         String emailText = email.getText().toString().trim();
         String nomText = nom.getText().toString().trim();
         String prenomText = prenom.getText().toString().trim();
         String pwd1Text = pwd1.getText().toString().trim();
         String pwd2Text = pwd2.getText().toString().trim();
         if(emailText.isEmpty()){
-            changeVisibility();
             email.setError("Veuillez remplir ce champ");
             email.requestFocus();
         } else if(!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()){
@@ -130,6 +114,7 @@ public class RegisterApp extends AppCompatActivity {
             pwd2.requestFocus();
         }  else {
             try {
+                progressBar.setVisibility(View.VISIBLE);
                 mAuth.createUserWithEmailAndPassword(emailText, pwd1Text).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
@@ -144,6 +129,7 @@ public class RegisterApp extends AppCompatActivity {
                                         mAuth.getCurrentUser().sendEmailVerification();
                                         Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
                                         Handler handler = new Handler();
+                                        progressBar.setVisibility(View.GONE);
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
@@ -152,20 +138,21 @@ public class RegisterApp extends AppCompatActivity {
                                         },3000);
                                     } else {
                                         Toast.makeText(RegisterApp.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                        progressBar.setVisibility(View.GONE);
                                     }
                                 }
                             });
 
                         } else {
                             Toast.makeText(RegisterApp.this, "Erreur lors de l'inscription, veuillez réessayer! " + task.getException(), Toast.LENGTH_LONG).show();
-                            //progressBar.setVisibility(View.INVISIBLE);
+                            progressBar.setVisibility(View.GONE);
                         }
                     }
                 });
             } catch (Exception e){
                 Toast.makeText(RegisterApp.this, "User data creation failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.GONE);
             }
         }
-        progressBar.setVisibility(View.INVISIBLE);
     }
 }
