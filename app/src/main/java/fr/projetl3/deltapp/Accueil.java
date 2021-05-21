@@ -1,15 +1,22 @@
 package fr.projetl3.deltapp;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -238,13 +245,28 @@ public class Accueil extends AppCompatActivity {
             } else {
                 Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
             }
+            InputImage inputImage = InputImage.fromBitmap(captureImage, 0);
+            TextRecognizer recognizer = TextRecognition.getClient();
+            Task<Text> result =
+                    recognizer.process(inputImage)
+                            .addOnSuccessListener(new OnSuccessListener<Text>() {
+                                @Override
+                                public void onSuccess(Text visionText) {
+                                    Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
+                                    inputCalc.setText(visionText.getText());
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                            })
+                            .addOnFailureListener(
+                                    new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                            progressBar.setVisibility(View.GONE);
+                                        }
+                                    });
 
-            try {
-                DetectText detectText = new DetectText(file.getAbsolutePath());
-                Toast.makeText(Accueil.this, "Text= " + detectText.getText(), Toast.LENGTH_LONG).show();
-            } catch (IOException e) {
-                Toast.makeText(Accueil.this, "Erreur= " + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
