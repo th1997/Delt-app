@@ -91,6 +91,7 @@ public class Account extends AppCompatActivity {
         this.nom = (TextView) findViewById(R.id.tvNomAccount);
     }
 
+    // Se déconnecter de votre compte.
     private void logout(){
         mAuth.signOut();
         Toast.makeText(Account.this, "Déconnexion réussi!\nRedirection vers la page de connexion dans 3s", Toast.LENGTH_LONG).show();

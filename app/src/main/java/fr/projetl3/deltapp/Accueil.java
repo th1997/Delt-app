@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -229,26 +230,12 @@ public class Accueil extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100) {
             Bitmap captureImage = (Bitmap) data.getExtras().get("data");
-            File file = null;
-            try {
-                file = savebitmap(captureImage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if(file != null && file.exists()){
-                Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
-                try {
-                    Toast.makeText(Accueil.this, file.getPath(), Toast.LENGTH_LONG).show();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+            boolean created = false;
+            created = savebitmap(captureImage);
+            if(created){
+                Toast.makeText(Accueil.this, "Photo enregistré! ", Toast.LENGTH_LONG).show();
             } else {
-                if(file == null){
-                    Toast.makeText(Accueil.this, "File = null", Toast.LENGTH_LONG).show();
-                } else{
-                    Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
-
-                }
+                Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
             }
 
 
@@ -259,17 +246,20 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
-    private File savebitmap(Bitmap bmp) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 60, bytes);
-        File f = new File(Environment.getExternalStorageDirectory()
-                + File.separator + "testimage.jpg");
-        if(f.createNewFile()){
-            Toast.makeText(Accueil.this, "Photo enregistré! " + f.getPath(), Toast.LENGTH_LONG).show();
+    public boolean savebitmap(Bitmap image) {
+        try {
+            // Use the compress method on the Bitmap object to write image to
+            // the OutputStream
+            FileOutputStream fos = openFileOutput("desiredFilename.png", Context.MODE_PRIVATE);
+
+            // Writing the bitmap to the output stream
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+
+            return true;
+        } catch (Exception e) {
+            Toast.makeText(Accueil.this, "Le fichier n'existe pas: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return false;
         }
-        FileOutputStream fo = new FileOutputStream(f);
-        fo.write(bytes.toByteArray());
-        fo.close();
-        return f;
     }
 }
