@@ -23,7 +23,8 @@ public class Equation2Degre {
         long val;
         String tmp;
         if(str.contains("x2")){
-            tmp = str.replaceAll("x2", ""); tmp = tmp.replaceAll("X2", "");
+            tmp = str.replaceAll("x2", "");
+            tmp = tmp.replaceAll("X2", "");
             if(tmp.contains("x")){ Toast.makeText(instance, "Erreur " + tmp, Toast.LENGTH_SHORT).show(); return;}// Erreur string temporaire
             try {
                 val = Long.parseLong(tmp);

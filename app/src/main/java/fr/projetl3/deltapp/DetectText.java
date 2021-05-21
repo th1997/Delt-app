@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DetectText extends AppCompatActivity {
-    private String text;
-
     public DetectText() throws IOException {
         /* TODO(developer): Replace these variables before running the sample.
         String filePath = "path/to/your/image/file.jpg";
@@ -52,7 +50,6 @@ public class DetectText extends AppCompatActivity {
 
                 // For full list of available annotations, see http://g.co/cloud/vision/docs
                 for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
-                    text = annotation.getDescription();
                     System.out.format("Text: %s%n", annotation.getDescription());
                     System.out.format("Position : %s%n", annotation.getBoundingPoly());
                 }
@@ -60,9 +57,5 @@ public class DetectText extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String getText() {
-        return text;
     }
 }
