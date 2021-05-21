@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -230,14 +231,20 @@ public class Accueil extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100) {
             Bitmap captureImage = (Bitmap) data.getExtras().get("data");
-            boolean created = false;
-            created = savebitmap(captureImage);
+            File file = getOutputMediaFile();
+            boolean created = savebitmap(captureImage, file);
             if(created){
-                Toast.makeText(Accueil.this, "Photo enregistré! ", Toast.LENGTH_LONG).show();
+                Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
             }
 
+            try {
+                DetectText detectText = new DetectText(file.getAbsolutePath());
+                Toast.makeText(Accueil.this, "Text= " + detectText.getText(), Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                Toast.makeText(Accueil.this, "Erreur= " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
@@ -246,20 +253,47 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
-    public boolean savebitmap(Bitmap image) {
-        try {
-            // Use the compress method on the Bitmap object to write image to
-            // the OutputStream
-            FileOutputStream fos = openFileOutput("desiredFilename.png", Context.MODE_PRIVATE);
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
 
-            // Writing the bitmap to the output stream
-            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.close();
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
 
-            return true;
-        } catch (Exception e) {
-            Toast.makeText(Accueil.this, "Le fichier n'existe pas: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
+    }
+
+    private boolean savebitmap(Bitmap image, File pictureFile) {
+        //File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Toast.makeText(Accueil.this, "Error creating media file, check storage permissions: ", Toast.LENGTH_LONG).show();
             return false;
         }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            Toast.makeText(Accueil.this, "File not found: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(Accueil.this, "Error accessing file:" + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 }
