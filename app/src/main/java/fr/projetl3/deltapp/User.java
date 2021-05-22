@@ -7,14 +7,14 @@ public class User {
     public String prenom;
 
     public User(String email, String nom, String prenom) {
-        this.email = email;
-        this.nom = nom;
+        this.email  = email;
+        this.nom    = nom;
         this.prenom = prenom;
     }
 
     public User() {
-        this.email = "Sans email";
-        this.nom = "Sans nom";
+        this.email  = "Sans email";
+        this.nom    = "Sans nom";
         this.prenom = "Sans prenom";
     }
 

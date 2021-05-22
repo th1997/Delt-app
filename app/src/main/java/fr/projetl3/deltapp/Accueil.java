@@ -1,14 +1,11 @@
 package fr.projetl3.deltapp;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.projetl3.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,11 +15,11 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -33,11 +30,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -45,142 +42,106 @@ import fr.projetl3.deltapp.maths.Equation2Degre;
 
 public class Accueil extends AppCompatActivity {
 
-
-    private ImageButton login, menu, basics, eq2nd;
-    private EditText inputCalc;
-    private Button camera_button, calc;
-    private TextView title, basics_title, eq2nd_title, result;
-    private ImageView camera_capture, click_here;
-    private ProgressBar progressBar;
-
-    private FirebaseAuth mAuth;
+    private ImageButton  login, menu, basics, eq2nd;
+    private EditText     inputCalc;
+    private Button       camera_button, calc;
+    private TextView     title, basics_title, eq2nd_title, result;
+    private ImageView    camera_capture, click_here;
+    private ProgressBar  progressBar;
     private FirebaseUser user;
-    private boolean isModuleSelected = false;
-    private String moduleSelected;
-
-
-
+    private boolean      isModuleSelected = false;
+    private String       moduleSelected;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
+
         mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
+        user  = mAuth.getCurrentUser();
+
         setupUI();
-        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(Accueil.this, new String[]{
-                    Manifest.permission.CAMERA
-            }, 100);
-        }
-        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(Accueil.this, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, 100);
-        }
+        checkPerm();
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(user != null){
-                    startActivity(new Intent(getApplicationContext(), Account.class));
-                } else {
-                    startActivity(new Intent(getApplicationContext(), LoginApp.class));
-                }
-            }
+        login.setOnClickListener(v -> {
+            if(user != null)
+                startActivity(new Intent(getApplicationContext(), Account.class));
+            else
+                startActivity(new Intent(getApplicationContext(), LoginApp.class));
         });
 
-        camera_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isModuleSelected){
-                    // Prend photo blabla
-                    Toast.makeText(Accueil.this, "Wow une photo!", Toast.LENGTH_SHORT).show();
-                    turnCameraON();
-                } else {
-                    Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
-                }
-            }
+        camera_button.setOnClickListener(v -> {
+            if(isModuleSelected)
+                turnCameraON();
+            else
+                Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
         });
 
-        menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isModuleSelected){
-                    // Ouvre cameré et caches la selection des modules.
-                    Toast.makeText(Accueil.this, "GG chenapan", Toast.LENGTH_SHORT).show();
-                    isModuleSelected = false;
-                    switchUIvisibility();
-                    moduleSelected = "SÉLECTION DU MODULE";
-                    camera_button.setBackgroundResource(R.drawable.rounded_button_disabled);
-                    title.setText(moduleSelected);
-                } else {
-                    Toast.makeText(Accueil.this, "Vous êtes déjà sur le menu de selection de module", Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
-
-        basics.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moduleSelected = "Calculs basique";
-                isModuleSelected = true;
+        menu.setOnClickListener(v -> {
+            if(isModuleSelected){
+                // Ouvre camera et caches la selection des modules.
+                Toast.makeText(Accueil.this, "GG chenapan", Toast.LENGTH_SHORT).show();
+                isModuleSelected = false;
                 switchUIvisibility();
+                moduleSelected = "SÉLECTION DU MODULE";
+                camera_button.setBackgroundResource(R.drawable.rounded_button_disabled);
                 title.setText(moduleSelected);
-                camera_button.setBackgroundResource(R.drawable.rounded_button);
-            }
+            } else
+                Toast.makeText(Accueil.this, "Vous êtes déjà sur le menu de selection de module", Toast.LENGTH_SHORT).show();
         });
 
-        eq2nd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moduleSelected = "Équation 2nd degré";
-                isModuleSelected = true;
-                switchUIvisibility();
-                title.setText(moduleSelected);
-                camera_button.setBackgroundResource(R.drawable.rounded_button);
-            }
+        basics.setOnClickListener(v -> {
+            moduleSelected   = "Calculs basique";
+            isModuleSelected = true;
+            switchUIvisibility();
+            title.setText(moduleSelected);
+            camera_button.setBackgroundResource(R.drawable.rounded_button);
         });
 
-        calc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String inputText = inputCalc.getText().toString().trim();
-                if(inputText.isEmpty()){
-                    Toast.makeText(Accueil.this, "Vous devez remplir la zone de texte", Toast.LENGTH_SHORT).show();
-                } else {
-                    calcul();
-                }
-            }
+        eq2nd.setOnClickListener(v -> {
+            moduleSelected   = "Équation 2nd degré";
+            isModuleSelected = true;
+            switchUIvisibility();
+            title.setText(moduleSelected);
+            camera_button.setBackgroundResource(R.drawable.rounded_button);
+        });
+
+        calc.setOnClickListener(v -> {
+            String inputText = inputCalc.getText().toString().trim();
+
+            if(inputText.isEmpty())
+                Toast.makeText(Accueil.this, "Vous devez remplir la zone de texte", Toast.LENGTH_SHORT).show();
+            else
+                calcul();
         });
     }
 
-
     private void setupUI(){
-        login = (ImageButton) findViewById(R.id.login_button_accueil);
-        menu = (ImageButton) findViewById(R.id.menu_button_accueil);
-        basics = (ImageButton) findViewById(R.id.basic_maths_button);
-        eq2nd = (ImageButton) findViewById(R.id.equation_2nd_button);
-        camera_button = (Button) findViewById(R.id.camera_capture_button_accueil);
-        click_here = (ImageView) findViewById(R.id.iv_click_here);
+        login          = (ImageButton) findViewById(R.id.login_button_accueil);
+        menu           = (ImageButton) findViewById(R.id.menu_button_accueil);
+        basics         = (ImageButton) findViewById(R.id.basic_maths_button);
+        eq2nd          = (ImageButton) findViewById(R.id.equation_2nd_button);
+        camera_button  = (Button)      findViewById(R.id.camera_capture_button_accueil);
+        click_here     = (ImageView)   findViewById(R.id.iv_click_here);
 
-        title = (TextView) findViewById(R.id.tv_module_title);
-        basics_title = (TextView) findViewById(R.id.tv_basic_maths);
-        eq2nd_title = (TextView) findViewById(R.id.tv_equation_2nd);
+        title          = (TextView)    findViewById(R.id.tv_module_title);
+        basics_title   = (TextView)    findViewById(R.id.tv_basic_maths);
+        eq2nd_title    = (TextView)    findViewById(R.id.tv_equation_2nd);
 
-        inputCalc = (EditText) findViewById(R.id.input_calc);
-        calc = (Button) findViewById(R.id.calc_button);
-        result = (TextView) findViewById(R.id.tv_result);
+        inputCalc      = (EditText)    findViewById(R.id.input_calc);
+        calc           = (Button)      findViewById(R.id.calc_button);
+        result         = (TextView)    findViewById(R.id.tv_result);
 
-        camera_capture = (ImageView) findViewById(R.id.iv_camera_capture);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarAnalyse);
+        camera_capture = (ImageView)   findViewById(R.id.iv_camera_capture);
+        progressBar    = (ProgressBar) findViewById(R.id.progressBarAnalyse);
 
         basics.setVisibility(View.VISIBLE);
         basics_title.setVisibility(View.VISIBLE);
         eq2nd.setVisibility(View.VISIBLE);
         eq2nd_title.setVisibility(View.VISIBLE);
     }
+
     private void switchUIvisibility(){
         if(isModuleSelected){
             basics.setVisibility(View.GONE);
@@ -208,6 +169,7 @@ public class Accueil extends AppCompatActivity {
         }
 
     }
+
     private void calcul(){
         if(isModuleSelected){
             switch (moduleSelected){
@@ -216,7 +178,7 @@ public class Accueil extends AppCompatActivity {
                         progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
                         String equationText = inputCalc.getText().toString().trim();
-                        Equation2Degre eq = new Equation2Degre(equationText, Accueil.this);
+                        Equation2Degre eq   = new Equation2Degre(equationText, Accueil.this);
                         result.setText(equationText + "\n" + eq.toString() + "\n" + eq.result());
                     }catch (Exception e){
                         Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -242,37 +204,32 @@ public class Accueil extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == 100) {
-            Bitmap captureImage = (Bitmap) data.getExtras().get("data");
-            File file = getOutputMediaFile();
-            boolean created = savebitmap(captureImage, file);
+            assert data != null;
+            Bitmap  captureImage = (Bitmap) data.getExtras().get("data");
+            File    file         = getOutputMediaFile();
+            boolean created      = savebitmap(captureImage, file);
+
             if(created){
+                assert file != null;
                 Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
-            } else {
+            } else
                 Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
-            }
-            InputImage inputImage = InputImage.fromBitmap(captureImage, 0);
+
             TextRecognizer recognizer = TextRecognition.getClient();
-            Task<Text> result =
-                    recognizer.process(inputImage)
-                            .addOnSuccessListener(new OnSuccessListener<Text>() {
-                                @Override
-                                public void onSuccess(Text visionText) {
-                                    Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
-                                    inputCalc.setText(visionText.getText());
-                                    progressBar.setVisibility(View.GONE);
-                                }
+            InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
+            Task<Text>     result     = recognizer.process(inputImage)
+                            .addOnSuccessListener(visionText -> {
+                                Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
+                                inputCalc.setText(visionText.getText());
+                                progressBar.setVisibility(View.GONE);
                             })
                             .addOnFailureListener(
-                                    new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                            progressBar.setVisibility(View.GONE);
-                                        }
+                                    e -> {
+                                        Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        progressBar.setVisibility(View.GONE);
                                     });
-
-
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
@@ -282,38 +239,30 @@ public class Accueil extends AppCompatActivity {
     }
 
     private  File getOutputMediaFile(){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-        File mediaFile;
-        String mImageName="MI_"+ timeStamp +".jpg";
-        File mediaStorageDir = new File(getExternalFilesDir(null), mImageName);
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
+        File   mediaFile;
+        @SuppressLint("SimpleDateFormat")
+        String timeStamp       = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        String mImageName      = "MI_"+ timeStamp +".png";
+        File   mediaStorageDir = new File(getExternalFilesDir(null),"");
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()){
-            if (!mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists())
+            if (!mediaStorageDir.mkdirs())
                 return null;
-            }
-        }
-        // Create a media file name
-        /*String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-        File mediaFile;
-        String mImageName="MI_"+ timeStamp +".jpg";*/
+
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         return mediaFile;
     }
 
     private boolean savebitmap(Bitmap image, File pictureFile) {
-        //File pictureFile = getOutputMediaFile();
         if (pictureFile == null) {
             Toast.makeText(Accueil.this, "Error creating media file, check storage permissions: ", Toast.LENGTH_LONG).show();
             return false;
         }
+
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
-            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
             return true;
         } catch (FileNotFoundException e) {
@@ -322,5 +271,18 @@ public class Accueil extends AppCompatActivity {
             Toast.makeText(Accueil.this, "Error accessing file:" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return false;
+    }
+
+    private void checkPerm(){
+        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(Accueil.this, new String[]{
+                    Manifest.permission.CAMERA
+            }, 100);
+        }
+        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(Accueil.this, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, 100);
+        }
     }
 }

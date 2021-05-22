@@ -27,14 +27,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class RegisterApp extends AppCompatActivity {
 
-    private ImageButton retour;
-    private EditText email, nom, prenom, pwd1, pwd2;
-    private Button bRegister;
-    private TextView userLoginPage;
-    private ProgressBar progressBar;
+    private ImageButton  retour;
+    private EditText     email, nom, prenom, pwd1, pwd2;
+    private Button       bRegister;
+    private TextView     userLoginPage;
+    private ProgressBar  progressBar;
     private FirebaseAuth mAuth;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,25 +67,26 @@ public class RegisterApp extends AppCompatActivity {
     }
 
     private void setupUIViews(){
-        retour = (ImageButton) findViewById(R.id.btn_go_to_main);
-        email = (EditText)findViewById(R.id.emailRegister);
-        nom = (EditText)findViewById(R.id.nomRegister);
-        prenom = (EditText)findViewById(R.id.prenomRegister);
-        pwd1 = (EditText)findViewById(R.id.pwd1Register);
-        pwd2 = (EditText)findViewById(R.id.pwd2Register);
-        bRegister = (Button)findViewById(R.id.bRegister);
-        userLoginPage = (TextView)findViewById(R.id.tvLogin);
-        progressBar = (ProgressBar)findViewById(R.id.progressBarRegister);
+        retour        = (ImageButton) findViewById(R.id.btn_go_to_main);
+        email         = (EditText)    findViewById(R.id.emailRegister);
+        nom           = (EditText)    findViewById(R.id.nomRegister);
+        prenom        = (EditText)    findViewById(R.id.prenomRegister);
+        pwd1          = (EditText)    findViewById(R.id.pwd1Register);
+        pwd2          = (EditText)    findViewById(R.id.pwd2Register);
+        bRegister     = (Button)      findViewById(R.id.bRegister);
+        userLoginPage = (TextView)    findViewById(R.id.tvLogin);
+        progressBar   = (ProgressBar) findViewById(R.id.progressBarRegister);
     }
 
 
     private void register() {
 
-        String emailText = email.getText().toString().trim();
-        String nomText = nom.getText().toString().trim();
+        String emailText  = email.getText().toString().trim();
+        String nomText    = nom.getText().toString().trim();
         String prenomText = prenom.getText().toString().trim();
-        String pwd1Text = pwd1.getText().toString().trim();
-        String pwd2Text = pwd2.getText().toString().trim();
+        String pwd1Text   = pwd1.getText().toString().trim();
+        String pwd2Text   = pwd2.getText().toString().trim();
+
         if(emailText.isEmpty()){
             email.setError("Veuillez remplir ce champ");
             email.requestFocus();
@@ -97,7 +96,6 @@ public class RegisterApp extends AppCompatActivity {
         } else if(nomText.isEmpty()){
             nom.setError("Veuillez remplir ce champ");
             nom.requestFocus();
-
         } else if(prenomText.isEmpty()){
             prenom.setError("Veuillez remplir ce champ");
             prenom.requestFocus();
@@ -112,41 +110,31 @@ public class RegisterApp extends AppCompatActivity {
         } else if(!pwd1Text.equalsIgnoreCase(pwd2Text)){
             pwd2.setError("Les mot de passe doivent correspondre");
             pwd2.requestFocus();
-        }  else {
+        } else {
             try {
                 progressBar.setVisibility(View.VISIBLE);
-                mAuth.createUserWithEmailAndPassword(emailText, pwd1Text).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            User user = new User(emailText, nomText, prenomText);
-                            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                            DatabaseReference usersRef = rootRef.child("users");
-                            usersRef.child(mAuth.getCurrentUser().getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        mAuth.getCurrentUser().sendEmailVerification();
-                                        Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
-                                        Handler handler = new Handler();
-                                        progressBar.setVisibility(View.GONE);
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                startActivity(new Intent(getApplicationContext(), LoginApp.class));
-                                            }
-                                        },3000);
-                                    } else {
-                                        Toast.makeText(RegisterApp.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
-                                    }
-                                }
-                            });
+                mAuth.createUserWithEmailAndPassword(emailText, pwd1Text).addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        User              user     = new User(emailText, nomText, prenomText);
+                        DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference usersRef = rootRef.child("users");
 
-                        } else {
-                            Toast.makeText(RegisterApp.this, "Erreur lors de l'inscription, veuillez réessayer! " + task.getException(), Toast.LENGTH_LONG).show();
-                            progressBar.setVisibility(View.GONE);
-                        }
+                        usersRef.child(mAuth.getCurrentUser().getUid()).setValue(user).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                mAuth.getCurrentUser().sendEmailVerification();
+                                Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
+                                Handler handler = new Handler();
+                                progressBar.setVisibility(View.GONE);
+                                handler.postDelayed(() -> startActivity(new Intent(getApplicationContext(), LoginApp.class)),3000);
+                            } else {
+                                Toast.makeText(RegisterApp.this, task1.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(RegisterApp.this, "Erreur lors de l'inscription, veuillez réessayer! " + task.getException(), Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             } catch (Exception e){
