@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.projetl3.R;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +20,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -57,7 +62,14 @@ public class Accueil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
-
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         mAuth = FirebaseAuth.getInstance();
         user  = mAuth.getCurrentUser();
 
@@ -197,8 +209,17 @@ public class Accueil extends AppCompatActivity {
     }
 
     private void turnCameraON(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 100);
+        try {
+            File file = getOutputMediaFile();
+            Uri uri = Uri.fromFile(file);
+            //Uri imageUri = Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + "saved.png"));
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            startActivityForResult(intent, 100);
+        } catch (Exception e){
+            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
@@ -207,8 +228,10 @@ public class Accueil extends AppCompatActivity {
 
         if (requestCode == 100) {
             assert data != null;
+
             Bitmap  captureImage = (Bitmap) data.getExtras().get("data");
             File    file         = getOutputMediaFile();
+            /*
             boolean created      = savebitmap(captureImage, file);
 
             if(created){
@@ -216,7 +239,7 @@ public class Accueil extends AppCompatActivity {
                 Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
             } else
                 Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
-
+            */
             TextRecognizer recognizer = TextRecognition.getClient();
             InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
             Task<Text>     result     = recognizer.process(inputImage)
