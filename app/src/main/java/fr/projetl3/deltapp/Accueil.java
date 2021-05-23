@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 import com.example.projetl3.R;
 import com.google.android.gms.tasks.Task;
@@ -36,9 +35,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -216,14 +212,12 @@ public class Accueil extends AppCompatActivity {
         try {
             File file = getOutputMediaFile();
             Uri uri = Uri.fromFile(file);
-            //Uri imageUri = Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + "saved.png"));
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, 100);
         } catch (Exception e){
             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
@@ -231,16 +225,7 @@ public class Accueil extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 100) {
-            Bitmap  captureImage = BitmapFactory.decodeFile(UriSav.toString());
-
-            /*
-            boolean created      = savebitmap(captureImage, file);
-            if(created){
-                assert file != null;
-                Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
-            } else
-                Toast.makeText(Accueil.this, "Le fichier n'existe pas", Toast.LENGTH_LONG).show();
-            */
+            Bitmap  captureImage      = BitmapFactory.decodeFile(UriSav.toString());
             TextRecognizer recognizer = TextRecognition.getClient();
             InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
             Task<Text>     result     = recognizer.process(inputImage)
@@ -278,25 +263,6 @@ public class Accueil extends AppCompatActivity {
         UriSav = new URI(mediaFile.getAbsolutePath());
 
         return mediaFile;
-    }
-
-    private boolean savebitmap(Bitmap image, File pictureFile) {
-        if (pictureFile == null) {
-            Toast.makeText(Accueil.this, "Error creating media file, check storage permissions: ", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        try {
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.close();
-            return true;
-        } catch (FileNotFoundException e) {
-            Toast.makeText(Accueil.this, "File not found: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(Accueil.this, "Error accessing file:" + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        return false;
     }
 
     private void checkPerm(){
