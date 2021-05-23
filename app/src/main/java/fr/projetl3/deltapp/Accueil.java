@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.projetl3.R;
 import com.google.android.gms.tasks.Task;
@@ -16,6 +17,7 @@ import com.google.mlkit.vision.text.TextRecognizer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -35,6 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -53,7 +58,7 @@ public class Accueil extends AppCompatActivity {
     private ImageView    camera_capture, click_here;
     private ProgressBar  progressBar;
     private FirebaseUser user;
-    private URI UriSav;
+    private Uri UriSav;
     private boolean      isModuleSelected = false;
     private String       moduleSelected;
     private FirebaseAuth mAuth;
@@ -212,12 +217,14 @@ public class Accueil extends AppCompatActivity {
         try {
             File file = getOutputMediaFile();
             Uri uri = Uri.fromFile(file);
+            //Uri imageUri = Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + "saved.png"));
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, 100);
         } catch (Exception e){
             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
@@ -225,26 +232,62 @@ public class Accueil extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 100) {
-            Bitmap  captureImage      = BitmapFactory.decodeFile(UriSav.toString());
-            TextRecognizer recognizer = TextRecognition.getClient();
-            InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
-            Task<Text>     result     = recognizer.process(inputImage)
-                    .addOnSuccessListener(visionText -> {
-                        Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
-                        inputCalc.setText(visionText.getText());
-                        progressBar.setVisibility(View.GONE);
-                    })
-                    .addOnFailureListener(
-                            e -> {
-                                Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                progressBar.setVisibility(View.GONE);
-                            });
+            try {
+                performCrop(UriSav);
+            } catch(Exception anfe){
+                //display an error message
+                String errorMessage = "Whoops - your device doesn't support the crop action!";
+                Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        } else if(requestCode == 200){
+            try {
+                Uri test = data.getData();
+                Bitmap  captureImage = BitmapFactory.decodeFile(test.getPath());
+                TextRecognizer recognizer = TextRecognition.getClient();
+                InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
+                Task<Text>     result     = recognizer.process(inputImage)
+                        .addOnSuccessListener(visionText -> {
+                            Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
+                            inputCalc.setText(visionText.getText());
+                            progressBar.setVisibility(View.GONE);
+                        })
+                        .addOnFailureListener(
+                                e -> {
+                                    Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    progressBar.setVisibility(View.GONE);
+                                });
 
-            camera_capture.setImageBitmap(captureImage);
-            camera_capture.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
-            click_here.setVisibility(View.GONE);
+                camera_capture.setImageBitmap(captureImage);
+                camera_capture.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
+                click_here.setVisibility(View.GONE);
+            } catch(Exception anfe){
+                //display an error message
+                String errorMessage = "Whoops - your device doesn't support the crop action!";
+                Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
+    }
+
+    private void performCrop(Uri picUri){
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        //indicate image type and Uri
+        cropIntent.setDataAndType(picUri, "image/*");
+        //set crop properties
+        cropIntent.putExtra("crop", "true");
+        //indicate aspect of desired crop
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+        //indicate output X and Y
+        //cropIntent.putExtra("outputX", 256);
+        //cropIntent.putExtra("outputY", 256);
+        //retrieve data on return
+        cropIntent.putExtra("scale", true);
+        cropIntent.putExtra("return-data", true);
+        //start the activity - we handle returning in onActivityResult
+        startActivityForResult(cropIntent, 200);
     }
 
     private  File getOutputMediaFile() throws URISyntaxException {
@@ -260,7 +303,7 @@ public class Accueil extends AppCompatActivity {
                 return null;
 
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-        UriSav = new URI(mediaFile.getAbsolutePath());
+        UriSav = Uri.fromFile(mediaFile);
 
         return mediaFile;
     }
