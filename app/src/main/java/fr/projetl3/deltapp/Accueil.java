@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -54,6 +57,7 @@ public class Accueil extends AppCompatActivity {
     private ImageView    camera_capture, click_here;
     private ProgressBar  progressBar;
     private FirebaseUser user;
+    private URI UriSav;
     private boolean      isModuleSelected = false;
     private String       moduleSelected;
     private FirebaseAuth mAuth;
@@ -227,13 +231,10 @@ public class Accueil extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 100) {
-            assert data != null;
+            Bitmap  captureImage = BitmapFactory.decodeFile(UriSav.toString());
 
-            Bitmap  captureImage = (Bitmap) data.getExtras().get("data");
-            File    file         = getOutputMediaFile();
             /*
             boolean created      = savebitmap(captureImage, file);
-
             if(created){
                 assert file != null;
                 Toast.makeText(Accueil.this, "Photo enregistré! " + file.getPath(), Toast.LENGTH_LONG).show();
@@ -243,16 +244,16 @@ public class Accueil extends AppCompatActivity {
             TextRecognizer recognizer = TextRecognition.getClient();
             InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
             Task<Text>     result     = recognizer.process(inputImage)
-                            .addOnSuccessListener(visionText -> {
-                                Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
-                                inputCalc.setText(visionText.getText());
+                    .addOnSuccessListener(visionText -> {
+                        Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
+                        inputCalc.setText(visionText.getText());
+                        progressBar.setVisibility(View.GONE);
+                    })
+                    .addOnFailureListener(
+                            e -> {
+                                Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 progressBar.setVisibility(View.GONE);
-                            })
-                            .addOnFailureListener(
-                                    e -> {
-                                        Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
-                                    });
+                            });
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
@@ -261,7 +262,7 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
-    private  File getOutputMediaFile(){
+    private  File getOutputMediaFile() throws URISyntaxException {
         File   mediaFile;
         @SuppressLint("SimpleDateFormat")
         String timeStamp       = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
@@ -274,6 +275,8 @@ public class Accueil extends AppCompatActivity {
                 return null;
 
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        UriSav = new URI(mediaFile.getAbsolutePath());
+
         return mediaFile;
     }
 
