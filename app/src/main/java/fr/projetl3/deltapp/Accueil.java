@@ -44,6 +44,7 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 
 public class Accueil extends AppCompatActivity {
@@ -186,20 +187,27 @@ public class Accueil extends AppCompatActivity {
 
     private void calcul(){
         if(isModuleSelected){
+            String equationText = inputCalc.getText().toString().trim();
             switch (moduleSelected){
                 case "Équation 2nd degré":
                     try {
                         progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
-                        String equationText = inputCalc.getText().toString().trim();
                         Equation2Degre eq   = new Equation2Degre(equationText, Accueil.this);
-                        result.setText(equationText + "\n" + eq.toString() + "\n" + eq.result());
+                        result.setText(eq.toString() + "\n" + eq.result());
                     }catch (Exception e){
                         Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case "Calculs basique":
-                    Toast.makeText(Accueil.this, "En cours de developpement", Toast.LENGTH_SHORT).show();
+                    try {
+                        progressBar.setVisibility(View.GONE);
+                        camera_capture.setVisibility(View.GONE);
+                        CalculBasique calculBasique = new CalculBasique(equationText);
+                        result.setText(calculBasique.result());
+                    }catch (Exception e){
+                        Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 default:
                     Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de lancer un calcul!", Toast.LENGTH_SHORT).show();
