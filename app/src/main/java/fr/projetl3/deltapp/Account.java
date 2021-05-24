@@ -93,6 +93,5 @@ public class Account extends AppCompatActivity {
         Toast.makeText(Account.this, "Déconnexion réussi!\nRedirection vers la page de connexion dans 3s", Toast.LENGTH_LONG).show();
         Handler handler = new Handler();
         handler.postDelayed(() -> startActivity(new Intent(getApplicationContext(), LoginApp.class)),3000);
-
     }
 }

@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -230,10 +232,17 @@ public class Accueil extends AppCompatActivity {
             InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
-                        Toast.makeText(Accueil.this, "Succès OCR: " + visionText.getText(), Toast.LENGTH_LONG).show();
-                        inputCalc.setText(visionText.getText());
+                        String blockText = "";
+                        for(Text.TextBlock tx : visionText.getTextBlocks()) {
+                            blockText = tx.getText();
+                            if(blockText.contains("=")){
+                                break;
+                            }
+                        }
+                        Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
+                        inputCalc.setText(blockText);
                         progressBar.setVisibility(View.GONE);
-                    })
+                        })
                     .addOnFailureListener(
                             e -> {
                                 Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();

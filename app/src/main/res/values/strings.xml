@@ -5,7 +5,7 @@
     <string name="text">text</string>
 
     <!-- Register/Login page String -->
-    <string name="emailText">Adresse mail</string>
+    <string name="emailText">mon@mail.com</string>
     <string name="prenomText">Prénom</string>
     <string name="nomText">Nom</string>
     <string name="passwordText">Mot de passe</string>

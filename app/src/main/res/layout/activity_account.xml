@@ -35,36 +35,42 @@
 
     <TextView
         android:id="@+id/tvEmailAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
-        android:layout_marginEnd="256dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
         android:text="@string/emailText"
         android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/tvPrenomAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAccountTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_go_to_main" />
 
     <TextView
         android:id="@+id/tvPrenomAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="256dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
         android:text="@string/prenomText"
         android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/tvNomAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvEmailAccount" />
 
     <TextView
         android:id="@+id/tvNomAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="256dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="380dp"
+        android:gravity="center"
         android:text="@string/nomText"
         android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/btnDisconnect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPrenomAccount" />
