@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <ImageView
                 android:id="@+id/view"
                 android:layout_width="match_parent"
@@ -23,7 +24,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/background_color" />
 
             <ImageView
                 android:id="@+id/ivfondBlanc"
@@ -35,7 +37,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView2"
-                app:srcCompat="@drawable/background_rounded_login" />
+                app:srcCompat="@drawable/background_rounded_login"
+                tools:ignore="ContentDescription" />
 
             <ImageButton
                 android:id="@+id/btn_go_to_main"
@@ -135,13 +138,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_login" />
+                app:srcCompat="@drawable/ic_login"
+                android:contentDescription="@string/login_icon" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LOGIN"
+                android:text="@string/login"
                 android:textSize="27sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/textView2"
@@ -155,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:hint="@string/passwordText"
-                android:text="E-MAIL"
+                android:text="@string/e_mail"
                 android:textColor="#1398FF"
                 android:textColorHint="#0000FF"
                 android:textSize="13sp"
@@ -170,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:hint="@string/passwordText"
-                android:text="MOT DE PASSE"
+                android:text="@string/mot_de_passe"
                 android:textColor="#1398FF"
                 android:textColorHint="#0000FF"
                 android:textSize="13sp"

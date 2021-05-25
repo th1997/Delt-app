@@ -4,19 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark"
+    android:background="@color/white"
     tools:context="fr.projetl3.deltapp.Account">
-
-    <TextView
-        android:id="@+id/tvAccountTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/account_title"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btn_go_to_main"
@@ -41,7 +30,7 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:text="@string/emailText"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/tvPrenomAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +44,7 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:text="@string/prenomText"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/tvNomAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +58,7 @@
         android:layout_marginBottom="380dp"
         android:gravity="center"
         android:text="@string/nomText"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/btnDisconnect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
