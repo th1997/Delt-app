@@ -53,69 +53,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_menu_disabled" />
 
-    <ImageButton
-        android:id="@+id/basic_maths_button"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="120dp"
-        android:background="@color/dark"
-        android:contentDescription="@string/login"
-        android:visibility="gone"
-        android:elevation="2dp"
-        android:ellipsize="none"
-        android:scaleType="fitCenter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/icons_basic_maths" />
-
-    <TextView
-        android:id="@+id/tv_basic_maths"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="@string/module_basic_maths"
-        android:textColor="@color/laspalmas"
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/basic_maths_button"
-        app:layout_constraintEnd_toEndOf="@+id/basic_maths_button"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/basic_maths_button" />
-
-    <ImageButton
-        android:id="@+id/equation_2nd_button"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="120dp"
-        android:background="@color/dark"
-        android:visibility="gone"
-        android:contentDescription="@string/login"
-        android:elevation="2dp"
-        android:ellipsize="none"
-        android:scaleType="fitCenter"
-        app:layout_constraintStart_toEndOf="@+id/basic_maths_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/icons_eq2degre" />
-
-
-    <TextView
-        android:id="@+id/tv_equation_2nd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
-        android:text="@string/module_equation_2nd"
-        android:visibility="gone"
-        android:textColor="@color/red"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/equation_2nd_button"
-        app:layout_constraintEnd_toEndOf="@+id/equation_2nd_button"
-        app:layout_constraintStart_toStartOf="@+id/equation_2nd_button"
-        />
-
     <TextView
         android:id="@+id/tv_module_title"
         android:layout_width="wrap_content"
@@ -128,21 +65,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_result"
-        android:layout_width="364dp"
-        android:layout_height="110dp"
-        android:layout_marginTop="35dp"
-        android:text=""
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_button" />
 
     <EditText
         android:id="@+id/input_calc"
@@ -160,20 +82,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_module_title" />
 
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="364dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="35dp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_button" />
+
     <Button
         android:id="@+id/calc_button"
         android:layout_width="193dp"
         android:layout_height="55dp"
-        android:layout_marginTop="35dp"
+        android:background="@color/firefly"
         android:text="@string/calculer_button"
         android:textColor="@color/white"
-        android:textStyle="bold"
         android:textSize="20sp"
+        android:textStyle="bold"
         android:visibility="gone"
-        android:background="@color/firefly"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_module_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_calc" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/iv_camera_capture"
@@ -202,10 +138,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/input_calc"
-        app:layout_constraintEnd_toEndOf="@+id/input_calc"
-        app:layout_constraintStart_toStartOf="@+id/input_calc"
-        app:layout_constraintTop_toTopOf="@+id/input_calc" />
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent">
+    </ProgressBar>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="409dp"
+        android:layout_height="432dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_calc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetl3.R;
 import com.google.android.gms.tasks.Task;
@@ -20,8 +22,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,29 +42,36 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 
 public class Accueil extends AppCompatActivity {
 
-    private ImageButton  login, menu, basics, eq2nd;
+    private ImageButton  login, menu;
     private EditText     inputCalc;
     private Button       camera_button, calc;
-    private TextView     title, basics_title, eq2nd_title, result;
-    private ImageView    camera_capture, click_here;
+    private TextView     title, result;
+    private ImageView    camera_capture, click_here, imageView;
     private ProgressBar  progressBar;
     private FirebaseUser user;
-    private URI UriSav;
+    private URI          UriSav;
     private boolean      isModuleSelected = false;
     private String       moduleSelected;
     private FirebaseAuth mAuth;
+    private RecyclerView recyclerView;
+
+    public static final String LOG_TAG = "AndroidExample";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
+
         if (Build.VERSION.SDK_INT >= 24) {
             try {
                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
@@ -78,6 +85,19 @@ public class Accueil extends AppCompatActivity {
 
         setupUI();
         checkPerm();
+
+        List<Modules> modules = getListData();
+        this.recyclerView = this.findViewById(R.id.recyclerView);
+        recyclerView.setAdapter(new CustomRecyclerViewAdapter(this, modules));
+
+        // RecyclerView scroll vertical
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        imageView = this.findViewById(R.id.imageView_module);
+
+        if(imageView != null)
+            this.imageView.setImageResource(R.drawable.icons_basic_maths);
 
         login.setOnClickListener(v -> {
             if(user != null)
@@ -106,7 +126,7 @@ public class Accueil extends AppCompatActivity {
                 Toast.makeText(Accueil.this, "Vous êtes déjà sur le menu de selection de module", Toast.LENGTH_SHORT).show();
         });
 
-        basics.setOnClickListener(v -> {
+        /*basics.setOnClickListener(v -> {
             moduleSelected   = "Calculs basique";
             isModuleSelected = true;
             switchUIvisibility();
@@ -120,7 +140,7 @@ public class Accueil extends AppCompatActivity {
             switchUIvisibility();
             title.setText(moduleSelected);
             camera_button.setBackgroundResource(R.drawable.rounded_button);
-        });
+        });*/
 
         calc.setOnClickListener(v -> {
             String inputText = inputCalc.getText().toString().trim();
@@ -135,46 +155,26 @@ public class Accueil extends AppCompatActivity {
     private void setupUI(){
         login          = (ImageButton) findViewById(R.id.login_button_accueil);
         menu           = (ImageButton) findViewById(R.id.menu_button_accueil);
-        basics         = (ImageButton) findViewById(R.id.basic_maths_button);
-        eq2nd          = (ImageButton) findViewById(R.id.equation_2nd_button);
         camera_button  = (Button)      findViewById(R.id.camera_capture_button_accueil);
         click_here     = (ImageView)   findViewById(R.id.iv_click_here);
 
         title          = (TextView)    findViewById(R.id.tv_module_title);
-        basics_title   = (TextView)    findViewById(R.id.tv_basic_maths);
-        eq2nd_title    = (TextView)    findViewById(R.id.tv_equation_2nd);
 
-        inputCalc      = (EditText)    findViewById(R.id.input_calc);
         calc           = (Button)      findViewById(R.id.calc_button);
         result         = (TextView)    findViewById(R.id.tv_result);
 
         camera_capture = (ImageView)   findViewById(R.id.iv_camera_capture);
         progressBar    = (ProgressBar) findViewById(R.id.progressBarAnalyse);
-
-        basics.setVisibility(View.VISIBLE);
-        basics_title.setVisibility(View.VISIBLE);
-        eq2nd.setVisibility(View.VISIBLE);
-        eq2nd_title.setVisibility(View.VISIBLE);
     }
 
     private void switchUIvisibility(){
         if(isModuleSelected){
-            basics.setVisibility(View.GONE);
-            basics_title.setVisibility(View.GONE);
-            eq2nd.setVisibility(View.GONE);
-            eq2nd_title.setVisibility(View.GONE);
-
             inputCalc.setVisibility(View.VISIBLE);
             calc.setVisibility(View.VISIBLE);
             result.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.VISIBLE);
 
         } else {
-            basics.setVisibility(View.VISIBLE);
-            basics_title.setVisibility(View.VISIBLE);
-            eq2nd.setVisibility(View.VISIBLE);
-            eq2nd_title.setVisibility(View.VISIBLE);
-
             inputCalc.setVisibility(View.GONE);
             calc.setVisibility(View.GONE);
             result.setVisibility(View.GONE);
@@ -294,4 +294,20 @@ public class Accueil extends AppCompatActivity {
             }, 100);
         }
     }
+
+
+    private  List<Modules> getListData() {
+        List<Modules> list = new ArrayList<>();
+
+        Modules basique  = new Modules("Calculs basique", Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_basic_maths").toString());
+        Modules eq2nddeg = new Modules("Équation 2nd degré",  Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_eq2degre").toString());
+
+        list.add(basique);
+        list.add(eq2nddeg);
+
+
+
+        return list;
+    }
+
 }

@@ -34,7 +34,8 @@
         android:id="@+id/btn_go_to_main"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:backgroundTint="#FF5722"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="@color/black"
         android:contentDescription="Retour sur la page d'accueil !"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,9 +48,9 @@
 
     <EditText
         android:id="@+id/emailLogin"
-        android:layout_width="341dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/text_border"
         android:backgroundTint="@color/white"
         android:backgroundTintMode="screen"
@@ -62,15 +63,16 @@
         android:textColorHint="#A9A9A9"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
-        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
 
     <EditText
         android:id="@+id/pwdLogin"
-        android:layout_width="337dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="12dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/text_border"
         android:backgroundTint="@color/white"
@@ -83,37 +85,36 @@
         android:textColorHint="#A9A9A9"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
+        android:layout_marginTop="12dp"
         android:elevation="2dp"
         android:text="@string/noAccount"
         android:textColor="#A9A9A9"
         android:textColorHint="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnLogin"
         app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnLogin"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:background="@drawable/rounded_button"
         android:backgroundTint="#1398FF"
         android:text="@string/loginButtonText"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tvRegister"
+        app:layout_constraintBottom_toBottomOf="@id/textView4"
         app:layout_constraintEnd_toEndOf="@+id/pwdLogin"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="@+id/pwdLogin"
@@ -134,11 +135,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
         android:text="LOGIN"
         android:textSize="27sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/imageView3" />
@@ -172,4 +172,13 @@
         app:layout_constraintBottom_toTopOf="@+id/pwdLogin"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/emailLogin" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
