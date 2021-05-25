@@ -5,21 +5,61 @@
     android:id="@+id/registerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark"
+    android:background="@color/white"
     tools:context="fr.projetl3.deltapp.RegisterApp">
+
+    <ImageView
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:background="@drawable/background_color_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivfondBlanc"
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivSignup"
+        app:srcCompat="@drawable/background_rounded_login" />
+
+    <ImageView
+        android:id="@+id/ivSignup"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:layout_constraintBottom_toTopOf="@+id/ivfondBlanc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_go_to_main"
+        app:srcCompat="@drawable/ic_signup" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inscription"
+        android:textSize="27sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/ivfondBlanc"
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toBottomOf="@+id/ivSignup" />
 
     <ImageButton
         android:id="@+id/btn_go_to_main"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:backgroundTint="#FF5722"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#1398FF"
         android:contentDescription="Retour sur la page d'accueil !"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.005"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/abc_vector_test"
         tools:ignore="HardcodedText" />
 
@@ -33,14 +73,15 @@
         android:backgroundTintMode="screen"
         android:ems="10"
         android:hint="@string/passwordText"
+        android:importantForAutofill="no"
         android:inputType="textPassword"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nomRegister"
-        android:importantForAutofill="no"/>
+        app:layout_constraintBottom_toTopOf="@+id/pwd2Register"
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toBottomOf="@+id/nomRegister" />
 
     <EditText
         android:id="@+id/pwd2Register"
@@ -52,14 +93,15 @@
         android:backgroundTintMode="screen"
         android:ems="10"
         android:hint="@string/passwordText2"
+        android:importantForAutofill="no"
         android:inputType="textPassword"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pwd1Register"
-        android:importantForAutofill="no"/>
+        app:layout_constraintBottom_toBottomOf="@+id/ivfondBlanc"
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toBottomOf="@+id/pwd1Register" />
 
     <EditText
         android:id="@+id/emailRegister"
@@ -70,16 +112,16 @@
         android:backgroundTintMode="screen"
         android:ems="10"
         android:hint="@string/emailText"
+        android:importantForAutofill="no"
         android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_go_to_main"
-        app:layout_constraintVertical_bias="0.127"
-        android:importantForAutofill="no"/>
+        app:layout_constraintBottom_toTopOf="@+id/prenomRegister"
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toBottomOf="@+id/ivSignup"
+        app:layout_constraintVertical_bias="0.127" />
 
     <EditText
         android:id="@+id/nomRegister"
@@ -91,16 +133,61 @@
         android:backgroundTintMode="screen"
         android:ems="10"
         android:hint="@string/nomText"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tvLogin"
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toBottomOf="@+id/prenomRegister"
+        app:layout_constraintBottom_toTopOf="@+id/pwd1Register"
+        />
+
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/alreadyRegistered"
+        android:textColor="@color/black"
+        android:textColorHint="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bRegister"
+        app:layout_constraintVertical_bias="0.302" />
+
+    <Button
+        android:id="@+id/bRegister"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#1398FF"
+        android:text="@string/registerButtonText"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.837" />
+
+    <ProgressBar
+        android:id="@+id/progressBarRegister"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+        android:layout_width="117dp"
+        android:layout_height="102dp"
+        android:layout_marginTop="16dp"
+        android:indeterminateTint="@color/colorPrimaryDark"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prenomRegister"
-        app:layout_constraintVertical_bias="0.0"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/prenomRegister"
@@ -116,53 +203,11 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailRegister"
-        android:autofillHints="" />
+        app:layout_constraintEnd_toEndOf="@+id/ivfondBlanc"
+        app:layout_constraintBottom_toTopOf="@+id/nomRegister"
+        app:layout_constraintStart_toStartOf="@+id/ivfondBlanc"
+        app:layout_constraintTop_toBottomOf="@+id/emailRegister" />
 
-    <TextView
-        android:id="@+id/tvLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/alreadyRegistered"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bRegister"
-        app:layout_constraintVertical_bias="0.302" />
 
-    <Button
-        android:id="@+id/bRegister"
-        android:layout_width="214dp"
-        android:layout_height="56dp"
-        android:backgroundTint="#FF5722"
-        android:text="@string/registerButtonText"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.837" />
-
-    <ProgressBar
-        android:id="@+id/progressBarRegister"
-        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
-        android:layout_width="117dp"
-        android:layout_height="102dp"
-        android:layout_marginTop="16dp"
-        android:indeterminateTint="@color/colorPrimaryDark"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
