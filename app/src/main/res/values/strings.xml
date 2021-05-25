@@ -9,7 +9,7 @@
     <string name="prenomText">Prénom</string>
     <string name="nomText">Nom</string>
     <string name="passwordText">Mot de passe</string>
-    <string name="passwordText2">Vérification MDP</string>
+    <string name="passwordText2">Confirmation MDP</string>
     <string name="registerButtonText">S\'inscrire</string>
     <string name="loginButtonText">Se connecter</string>
     <string name="alreadyRegistered">Déja un compte? Connecte-toi !</string>
@@ -22,6 +22,7 @@
     <string name="module_basic_maths">Calculs basiques (+-*/)</string>
     <string name="modules_selection_title">SÉLECTION DU MODULE</string>
     <string name="calculer_button">Calculer</string>
+    <string name="durand">Durand</string>
 
     <!-- Colors -->
     <color name="white">#FFFFFF</color>
