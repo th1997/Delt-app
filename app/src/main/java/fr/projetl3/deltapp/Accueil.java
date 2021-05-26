@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import fr.projetl3.deltapp.maths.CalculBasique;
+import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 
 public class Accueil extends AppCompatActivity {
@@ -183,21 +184,31 @@ public class Accueil extends AppCompatActivity {
             String equationText = inputCalc.getText().toString().trim();
             switch (moduleSelected){
                 case "Equation 2nd degre":
-                    try {
+                   // try {
                         progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
                         Equation2Degre eq   = new Equation2Degre(equationText, Accueil.this);
                         result.setText(eq.toString() + "\n" + eq.result());
-                    }catch (Exception e){
+                    /*}catch (Exception e){
                         Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                    }*/
                     break;
                 case "Calculs basique":
                     try {
                         progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
                         CalculBasique calculBasique = new CalculBasique(equationText);
-                        result.setText(calculBasique.result());
+                        result.setText(calculBasique.toString());
+                    }catch (Exception e){
+                        Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case "Derive":
+                    try {
+                        progressBar.setVisibility(View.GONE);
+                        camera_capture.setVisibility(View.GONE);
+                        Derive derive = new Derive(equationText);
+                        result.setText(derive.toString());
                     }catch (Exception e){
                         Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -292,9 +303,9 @@ public class Accueil extends AppCompatActivity {
     private  List<Modules> getListData() {
         List<Modules> list = new ArrayList<>();
 
-        list.add(new Modules("Calculs basique", Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_basic_maths").toString()));
-        list.add(new Modules("Equation 2nd degre",  Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_eq2degre").toString()));
-        list.add(new Modules("Equation 3nd degre",  Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_eq2degre").toString()));
+        list.add(new Modules("Calculs basique"));
+        list.add(new Modules("Equation 2nd degre"));
+        list.add(new Modules("Derivation"));
 
         return list;
     }
