@@ -48,6 +48,7 @@ import java.util.List;
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
+import fr.projetl3.deltapp.maths.Polynome;
 
 public class Accueil extends AppCompatActivity {
 
@@ -180,46 +181,53 @@ public class Accueil extends AppCompatActivity {
     }
 
     private void calcul(){
-        if(isModuleSelected){
-            String equationText = inputCalc.getText().toString().trim();
-            switch (moduleSelected){
-                case "Equation 2nd degre":
-                   // try {
+        try {
+            if(isModuleSelected){
+                String equationText = inputCalc.getText().toString().trim();
+                switch (moduleSelected){
+                    case "Equation 2nd degre":
+                        // try {
                         progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
-                        Equation2Degre eq   = new Equation2Degre(equationText, Accueil.this);
+                        Equation2Degre eq   = new Equation2Degre(equationText);
+                        Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
                         result.setText(eq.toString() + "\n" + eq.result());
+
                     /*}catch (Exception e){
                         Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }*/
-                    break;
-                case "Calculs basique":
-                    try {
-                        progressBar.setVisibility(View.GONE);
-                        camera_capture.setVisibility(View.GONE);
-                        CalculBasique calculBasique = new CalculBasique(equationText);
-                        result.setText(calculBasique.toString());
-                    }catch (Exception e){
-                        Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case "Derive":
-                    try {
-                        progressBar.setVisibility(View.GONE);
-                        camera_capture.setVisibility(View.GONE);
-                        Derive derive = new Derive(equationText);
-                        result.setText(derive.toString());
-                    }catch (Exception e){
-                        Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                default:
-                    Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de lancer un calcul!", Toast.LENGTH_SHORT).show();
-                    break;
+                        break;
+                    case "Calculs basique":
+                        try {
+                            progressBar.setVisibility(View.GONE);
+                            camera_capture.setVisibility(View.GONE);
+                            CalculBasique calculBasique = new CalculBasique(equationText);
+                            result.setText(calculBasique.toString());
+                        }catch (Exception e){
+                            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case "Derive":
+                        try {
+                            progressBar.setVisibility(View.GONE);
+                            camera_capture.setVisibility(View.GONE);
+                            Derive derive = new Derive(equationText);
+                            result.setText(derive.toString());
+                        }catch (Exception e){
+                            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    default:
+                        Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de lancer un calcul!", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            } else {
+                Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e){
+            Toast.makeText(Accueil.this, "Erreur = " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void turnCameraON(){
@@ -254,7 +262,7 @@ public class Accueil extends AppCompatActivity {
                         Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
                         inputCalc.setText(blockText);
                         progressBar.setVisibility(View.GONE);
-                        })
+                    })
                     .addOnFailureListener(
                             e -> {
                                 Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();

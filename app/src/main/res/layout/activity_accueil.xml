@@ -101,6 +101,7 @@
         android:id="@+id/calc_button"
         android:layout_width="193dp"
         android:layout_height="55dp"
+        android:layout_marginBottom="35dp"
         android:background="@color/firefly"
         android:text="@string/calculer_button"
         android:textColor="@color/white"
@@ -110,7 +111,8 @@
         app:layout_constraintTop_toBottomOf="@+id/input_calc"
         app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/iv_camera_capture"

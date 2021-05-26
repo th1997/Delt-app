@@ -1,27 +1,25 @@
 package fr.projetl3.deltapp.maths;
 
-import android.widget.Toast;
+
 
 import org.mariuszgromada.math.mxparser.Expression;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Polynome {
     private String expression;
+    private HashMap<Integer, Double> coefficientPolynome;
 
-    public ArrayList<Double> getCoefficientPolynome() {
+    public HashMap<Integer, Double> getCoefficientPolynome() {
         return coefficientPolynome;
     }
 
-    private ArrayList<Double> coefficientPolynome;
+
 
     public Polynome(String expr){
         expression = expr;
-        coefficientPolynome = new ArrayList<Double>();
+        coefficientPolynome = new HashMap<>();
         construireTabEquation();
-        System.out.println(this.getCoefficientPolynome().get(0));
-        System.out.println(this.getCoefficientPolynome().get(1));
-        System.out.println(this.getCoefficientPolynome().get(2));
     }
 
     private void construireTabEquation() {
@@ -73,24 +71,37 @@ public class Polynome {
     }
 
     private void StringToTab(String str, boolean negatif){
-        long val = 0;
-        String tmp = "";
-        Expression expr = null;
-
+        double val,  lastval; int pui;
+        String tmp = ""; String[] split = {};
+        Expression exp;
         if(str.contains("x") || str.contains("X")){
             tmp = str.replaceAll("X", "x");
-            String[] split = tmp.split("x", 2);
-
-            expr = new Expression(split[0]);
-            coefficientPolynome.add(expr.calculate());
-            val = Long.parseLong(split[0]);
-
+            split = tmp.split("x", 2);
+            exp = new Expression(split[0]);
+            val = exp.calculate();
+            if(split[1].isEmpty()){ pui = 1;} else {pui = Integer.parseInt(split[1]);}
         } else {
-            val = Long.parseLong(str);
+            exp = new Expression(str);
+            val = exp.calculate();
+            pui = 0;
 
         }
-        if(negatif)
-            val *= -1;
-        coefficientPolynome.set(coefficientPolynome.size()-1,coefficientPolynome.get(coefficientPolynome.size()-1) + val);
+        if(val != 0){
+            if(negatif)
+                val *= -1;
+            if(coefficientPolynome.containsKey(pui)){
+                lastval = coefficientPolynome.get(pui);
+                coefficientPolynome.put(pui,lastval + val);}
+            else {
+                coefficientPolynome.put(pui,val);
+            }
+            System.out.println("Ajout de " + val + " à la puissance " + pui) ;
+        }
+
     }
 }
+
+
+
+
+
