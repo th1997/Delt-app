@@ -71,23 +71,19 @@ public class Accueil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
-
-        if (Build.VERSION.SDK_INT >= 24) {
-            try {
-                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                m.invoke(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+            m.invoke(null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mAuth = FirebaseAuth.getInstance();
-        user  = mAuth.getCurrentUser();
-
         setupUI();
         checkPerm();
 
+        mAuth = FirebaseAuth.getInstance();
+        user  = mAuth.getCurrentUser();
+
         List<Modules> modules = getListData();
-        this.recyclerView = this.findViewById(R.id.recyclerView);
         recyclerView.setAdapter(new CustomRecyclerViewAdapter(this, modules));
 
         // RecyclerView scroll vertical
@@ -163,8 +159,18 @@ public class Accueil extends AppCompatActivity {
         calc           = (Button)      findViewById(R.id.calc_button);
         result         = (TextView)    findViewById(R.id.tv_result);
 
+        inputCalc      = (EditText)    findViewById(R.id.input_calc);
+
         camera_capture = (ImageView)   findViewById(R.id.iv_camera_capture);
         progressBar    = (ProgressBar) findViewById(R.id.progressBarAnalyse);
+        recyclerView   = (RecyclerView) findViewById(R.id.recyclerView);
+        try {
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setAlpha(1);
+        } catch (Exception e){
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void switchUIvisibility(){
@@ -174,6 +180,9 @@ public class Accueil extends AppCompatActivity {
             result.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.VISIBLE);
 
+            recyclerView.setVisibility(View.GONE);
+            recyclerView.setAlpha(0);
+
         } else {
             inputCalc.setVisibility(View.GONE);
             calc.setVisibility(View.GONE);
@@ -181,6 +190,9 @@ public class Accueil extends AppCompatActivity {
             camera_capture.setVisibility(View.GONE);
             click_here.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
+
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setAlpha(1);
         }
 
     }
@@ -310,4 +322,11 @@ public class Accueil extends AppCompatActivity {
         return list;
     }
 
+    public void selectModule(String moduleName) {
+        moduleSelected   = moduleName;
+        isModuleSelected = true;
+        switchUIvisibility();
+        title.setText(moduleName);
+        camera_button.setBackgroundResource(R.drawable.rounded_button);
+    }
 }
