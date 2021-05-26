@@ -10,32 +10,37 @@
     android:layout_marginTop="5sp"
     android:layout_marginRight="5sp"
     android:layout_marginBottom="5sp"
-    app:cardBackgroundColor="#FAF5F5">
+    android:background="@color/black"
+    app:cardBackgroundColor="@color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_rounded_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
 
         <ImageView
             android:id="@+id/imageView_module"
-            android:layout_width="175dp"
-            android:layout_height="175dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/desc_module_picture"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_moduleName"
             app:srcCompat="@drawable/ic_launcher_foreground"
-            tools:ignore="VectorDrawableCompat"
-            android:contentDescription="@string/desc_module_picture" />
+            tools:ignore="VectorDrawableCompat" />
 
         <TextView
             android:id="@+id/textView_moduleName"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginTop="16dp"
-            android:textAlignment="center"
             android:text="@string/nom_du_module"
+            android:textAlignment="center"
             android:textSize="22sp"
+            app:layout_constraintBottom_toTopOf="@id/imageView_module"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -23,7 +23,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -55,7 +54,7 @@ public class Accueil extends AppCompatActivity {
     private EditText     inputCalc;
     private Button       camera_button, calc;
     private TextView     title, result;
-    private ImageView    camera_capture, click_here, imageView;
+    private ImageView    camera_capture, click_here;
     private ProgressBar  progressBar;
     private FirebaseUser user;
     private URI          UriSav;
@@ -79,6 +78,7 @@ public class Accueil extends AppCompatActivity {
         }
         setupUI();
         checkPerm();
+        switchUIvisibility();
 
         mAuth = FirebaseAuth.getInstance();
         user  = mAuth.getCurrentUser();
@@ -89,11 +89,6 @@ public class Accueil extends AppCompatActivity {
         // RecyclerView scroll vertical
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        imageView = this.findViewById(R.id.imageView_module);
-
-        if(imageView != null)
-            this.imageView.setImageResource(R.drawable.icons_basic_maths);
 
         login.setOnClickListener(v -> {
             if(user != null)
@@ -112,31 +107,16 @@ public class Accueil extends AppCompatActivity {
         menu.setOnClickListener(v -> {
             if(isModuleSelected){
                 // Ouvre camera et caches la selection des modules.
-                Toast.makeText(Accueil.this, "GG chenapan", Toast.LENGTH_SHORT).show();
                 isModuleSelected = false;
                 switchUIvisibility();
                 moduleSelected = "SÉLECTION DU MODULE";
                 camera_button.setBackgroundResource(R.drawable.rounded_button_disabled);
                 title.setText(moduleSelected);
+                inputCalc.setText("");
+                result.setText("");
             } else
                 Toast.makeText(Accueil.this, "Vous êtes déjà sur le menu de selection de module", Toast.LENGTH_SHORT).show();
         });
-
-        /*basics.setOnClickListener(v -> {
-            moduleSelected   = "Calculs basique";
-            isModuleSelected = true;
-            switchUIvisibility();
-            title.setText(moduleSelected);
-            camera_button.setBackgroundResource(R.drawable.rounded_button);
-        });
-
-        eq2nd.setOnClickListener(v -> {
-            moduleSelected   = "Équation 2nd degré";
-            isModuleSelected = true;
-            switchUIvisibility();
-            title.setText(moduleSelected);
-            camera_button.setBackgroundResource(R.drawable.rounded_button);
-        });*/
 
         calc.setOnClickListener(v -> {
             String inputText = inputCalc.getText().toString().trim();
@@ -164,6 +144,7 @@ public class Accueil extends AppCompatActivity {
         camera_capture = (ImageView)   findViewById(R.id.iv_camera_capture);
         progressBar    = (ProgressBar) findViewById(R.id.progressBarAnalyse);
         recyclerView   = (RecyclerView) findViewById(R.id.recyclerView);
+
         try {
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setAlpha(1);
@@ -201,7 +182,7 @@ public class Accueil extends AppCompatActivity {
         if(isModuleSelected){
             String equationText = inputCalc.getText().toString().trim();
             switch (moduleSelected){
-                case "Équation 2nd degré":
+                case "Equation 2nd degre":
                     try {
                         progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
@@ -311,13 +292,9 @@ public class Accueil extends AppCompatActivity {
     private  List<Modules> getListData() {
         List<Modules> list = new ArrayList<>();
 
-        Modules basique  = new Modules("Calculs basique", Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_basic_maths").toString());
-        Modules eq2nddeg = new Modules("Équation 2nd degré",  Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_eq2degre").toString());
-
-        list.add(basique);
-        list.add(eq2nddeg);
-
-
+        list.add(new Modules("Calculs basique", Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_basic_maths").toString()));
+        list.add(new Modules("Equation 2nd degre",  Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_eq2degre").toString()));
+        list.add(new Modules("Equation 3nd degre",  Uri.parse("android.resource://"+this.getPackageName()+"/drawable/icons_eq2degre").toString()));
 
         return list;
     }

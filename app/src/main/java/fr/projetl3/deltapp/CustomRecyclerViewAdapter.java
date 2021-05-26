@@ -42,7 +42,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<ModuleViewHo
     public void onBindViewHolder(ModuleViewHolder holder, int position) {
         Modules modules1 = this.modules.get(position);
 
-        int imageResId = this.getDrawableResIdByName(modules1.getModuleName());
+        int imageResId = this.getDrawableResIdByName("/drawable/ic_" +modules1.getModuleName().toLowerCase().replaceAll(" ", "_"));
         // Bind data to viewholder
         holder.modulePicsView.setImageResource(imageResId);
         holder.moduleNameView.setText(modules1.getModuleName() );

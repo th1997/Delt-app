@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark"
+    android:background="@drawable/background_color_login"
     tools:context="fr.projetl3.deltapp.Accueil">
 
     <Button
@@ -59,9 +59,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/modules_selection_title"
-        android:textStyle="bold"
-        android:textSize="30sp"
         android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -107,7 +107,8 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_module_title"
+        app:layout_constraintTop_toBottomOf="@+id/input_calc"
+        app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -144,12 +145,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="409dp"
-        android:layout_height="432dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
         android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_calc" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_module_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
