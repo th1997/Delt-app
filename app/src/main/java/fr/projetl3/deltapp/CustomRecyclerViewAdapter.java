@@ -48,12 +48,12 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<ModuleViewHo
         holder.moduleNameView.setText(modules1.getModuleName() );
         holder.itemView.setOnClickListener(v -> {
 
-            Toast.makeText(this.context,"Click 2 = " + modules1.getModuleName(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this.context,"Click 2 = " + modules1.getModuleName(), Toast.LENGTH_LONG).show();
             try {
                 if(context instanceof Accueil){
                     Accueil acc = (Accueil) context;
                     acc.selectModule(modules1.getModuleName());
-                    Toast.makeText(this.context, "AZERTYUIOP= " + modules1.getModuleName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this.context, "Sélection du module: " + modules1.getModuleName(), Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e){
                 Toast.makeText(this.context,"Exception = " + e.getMessage(), Toast.LENGTH_SHORT).show();
