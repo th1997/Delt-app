@@ -205,7 +205,8 @@ public class Accueil extends AppCompatActivity {
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Derive derive = new Derive(equationText);
-                            result.setText(derive.toString());
+                            String text = "f(" + derive.getSymbole() + ") = " + derive.getFonction() + "\nf'(" + derive.getSymbole() + ") = " + derive.getResult();
+                            result.setText(text);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }

@@ -183,6 +183,20 @@ public class Derive {
         return result;
     }
 
+    public String getFonction(){
+        String fonction = "";
+        for(int i = 0; i < list.size(); i++){
+            if(!list.get(i).isEmpty()){
+                if(list.get(i).startsWith("-") && i != 0){ fonction = fonction.concat(list.get(i).substring(1));}
+                else { fonction = fonction.concat(list.get(i)); }
+                if(i < list.size() - 1){
+                    if(list.get(i+1).startsWith("-")){ fonction = fonction.concat(" - "); } else { fonction = fonction.concat(" + ");  }
+                }
+            }
+        }
+        return fonction;
+    }
+
     private boolean isInteger(String str){
         try {
             Integer.parseInt(str);
