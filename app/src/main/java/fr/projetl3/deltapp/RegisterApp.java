@@ -1,6 +1,5 @@
 package fr.projetl3.deltapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -16,14 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.projetl3.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 public class RegisterApp extends AppCompatActivity {
 
@@ -37,45 +33,32 @@ public class RegisterApp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_register_app);
         //View view = this.getWindow().getDecorView(); view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
         setupUIViews();
 
-        retour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mainActivity = new Intent(getApplicationContext(), Accueil.class);
-                startActivity(mainActivity);
-                finish();
-            }
+        retour.setOnClickListener(v -> {
+            Intent mainActivity = new Intent(getApplicationContext(), Accueil.class);
+            startActivity(mainActivity);
+            finish();
         });
-        bRegister.setOnClickListener(new View.OnClickListener() {
+        bRegister.setOnClickListener(v -> register());
 
-            @Override
-            public void onClick(View v) { register(); }
-        });
-
-        userLoginPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), LoginApp.class));
-            }
-        });
+        userLoginPage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), LoginApp.class)));
 
     }
 
     private void setupUIViews(){
-        retour        = (ImageButton) findViewById(R.id.btn_go_to_main);
-        email         = (EditText)    findViewById(R.id.emailRegister);
-        nom           = (EditText)    findViewById(R.id.nomRegister);
-        prenom        = (EditText)    findViewById(R.id.prenomRegister);
-        pwd1          = (EditText)    findViewById(R.id.pwd1Register);
-        pwd2          = (EditText)    findViewById(R.id.pwd2Register);
-        bRegister     = (Button)      findViewById(R.id.bRegister);
-        userLoginPage = (TextView)    findViewById(R.id.tvLogin);
-        progressBar   = (ProgressBar) findViewById(R.id.progressBarRegister);
+        retour        = findViewById(R.id.btn_go_to_main);
+        email         = findViewById(R.id.emailRegister);
+        nom           = findViewById(R.id.nomRegister);
+        prenom        = findViewById(R.id.prenomRegister);
+        pwd1          = findViewById(R.id.pwd1Register);
+        pwd2          = findViewById(R.id.pwd2Register);
+        bRegister     = findViewById(R.id.bRegister);
+        userLoginPage = findViewById(R.id.tvLogin);
+        progressBar   = findViewById(R.id.progressBarRegister);
     }
 
 
@@ -119,7 +102,7 @@ public class RegisterApp extends AppCompatActivity {
                         DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
                         DatabaseReference usersRef = rootRef.child("users");
 
-                        usersRef.child(mAuth.getCurrentUser().getUid()).setValue(user).addOnCompleteListener(task1 -> {
+                        usersRef.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(user).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
                                 mAuth.getCurrentUser().sendEmailVerification();
                                 Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
@@ -127,7 +110,7 @@ public class RegisterApp extends AppCompatActivity {
                                 progressBar.setVisibility(View.GONE);
                                 handler.postDelayed(() -> startActivity(new Intent(getApplicationContext(), LoginApp.class)),3000);
                             } else {
-                                Toast.makeText(RegisterApp.this, task1.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(RegisterApp.this, Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                 progressBar.setVisibility(View.GONE);
                             }
                         });
