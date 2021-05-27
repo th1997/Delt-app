@@ -68,9 +68,11 @@
 
     <EditText
         android:id="@+id/input_calc"
-        android:layout_width="330dp"
-        android:layout_height="91dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="35dp"
+        android:layout_marginEnd="15dp"
         android:background="@drawable/text_border"
         android:ems="10"
         android:text=""
@@ -84,18 +86,19 @@
 
     <TextView
         android:id="@+id/tv_result"
-        android:layout_width="364dp"
-        android:layout_height="110dp"
-        android:layout_marginTop="35dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:text=""
         android:textColor="@color/white"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="gone"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_button" />
+        app:layout_constraintBottom_toTopOf="@id/calc_button"
+        app:layout_constraintEnd_toEndOf="@id/input_calc"
+        app:layout_constraintStart_toStartOf="@id/input_calc"
+        app:layout_constraintTop_toBottomOf="@id/input_calc" />
 
     <Button
         android:id="@+id/calc_button"
@@ -109,18 +112,19 @@
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/input_calc"
-        app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
+        app:layout_constraintBottom_toTopOf="@id/iv_click_here"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/iv_camera_capture"
-        android:layout_width="327dp"
-        android:layout_height="220dp"
-        android:layout_marginBottom="35dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
+        app:layout_constraintTop_toBottomOf="@+id/input_calc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -134,16 +138,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/arrow_down_float" />
-
-    <ProgressBar
-        android:id="@+id/progressBarAnalyse"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent">
-    </ProgressBar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

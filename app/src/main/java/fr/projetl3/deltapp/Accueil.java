@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -57,7 +59,6 @@ public class Accueil extends AppCompatActivity {
     private Button       camera_button, calc;
     private TextView     title, result;
     private ImageView    camera_capture, click_here;
-    private ProgressBar  progressBar;
     private FirebaseUser user;
     private URI          UriSav;
     private boolean      isModuleSelected = false;
@@ -144,7 +145,6 @@ public class Accueil extends AppCompatActivity {
         inputCalc      = (EditText)    findViewById(R.id.input_calc);
 
         camera_capture = (ImageView)   findViewById(R.id.iv_camera_capture);
-        progressBar    = (ProgressBar) findViewById(R.id.progressBarAnalyse);
         recyclerView   = (RecyclerView) findViewById(R.id.recyclerView);
 
         try {
@@ -172,7 +172,6 @@ public class Accueil extends AppCompatActivity {
             result.setVisibility(View.GONE);
             camera_capture.setVisibility(View.GONE);
             click_here.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
 
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setAlpha(1);
@@ -187,7 +186,6 @@ public class Accueil extends AppCompatActivity {
                 switch (moduleSelected){
                     case "Equation 2nd degre":
                         // try {
-                        progressBar.setVisibility(View.GONE);
                         camera_capture.setVisibility(View.GONE);
                         Equation2Degre eq   = new Equation2Degre(equationText);
                         Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
@@ -199,7 +197,6 @@ public class Accueil extends AppCompatActivity {
                         break;
                     case "Calculs basique":
                         try {
-                            progressBar.setVisibility(View.GONE);
                             camera_capture.setVisibility(View.GONE);
                             CalculBasique calculBasique = new CalculBasique(equationText);
                             result.setText(calculBasique.toString());
@@ -209,7 +206,6 @@ public class Accueil extends AppCompatActivity {
                         break;
                     case "Derive":
                         try {
-                            progressBar.setVisibility(View.GONE);
                             camera_capture.setVisibility(View.GONE);
                             Derive derive = new Derive(equationText);
                             result.setText(derive.toString());
@@ -261,17 +257,14 @@ public class Accueil extends AppCompatActivity {
                         }
                         Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
                         inputCalc.setText(blockText);
-                        progressBar.setVisibility(View.GONE);
                     })
                     .addOnFailureListener(
                             e -> {
                                 Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                progressBar.setVisibility(View.GONE);
                             });
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.GONE);
         }
     }
@@ -314,6 +307,7 @@ public class Accueil extends AppCompatActivity {
         list.add(new Modules("Calculs basique"));
         list.add(new Modules("Equation 2nd degre"));
         list.add(new Modules("Derivation"));
+        list.add(new Modules("Integrale"));
 
         return list;
     }
