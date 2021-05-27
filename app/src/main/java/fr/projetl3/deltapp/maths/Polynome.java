@@ -9,12 +9,7 @@ import java.util.HashMap;
 public class Polynome {
     private String expression;
     private HashMap<Integer, Double> coefficientPolynome;
-
-    public HashMap<Integer, Double> getCoefficientPolynome() {
-        return coefficientPolynome;
-    }
-
-
+    private int degres;
 
     public Polynome(String expr){
         expression = expr;
@@ -74,12 +69,23 @@ public class Polynome {
         double val,  lastval; int pui;
         String tmp = ""; String[] split = {};
         Expression exp;
+
         if(str.contains("x") || str.contains("X")){
             tmp = str.replaceAll("X", "x");
             split = tmp.split("x", 2);
-            exp = new Expression(split[0]);
-            val = exp.calculate();
-            if(split[1].isEmpty()){ pui = 1;} else {pui = Integer.parseInt(split[1]);}
+
+            if(split[0].isEmpty()){
+                val = 1;
+            }else {
+                exp = new Expression(split[0]);
+                val = exp.calculate();
+            }
+
+            if(split[1].isEmpty()){
+                pui = 1;
+            } else {
+                pui = Integer.parseInt(split[1]);
+            }
         } else {
             exp = new Expression(str);
             val = exp.calculate();
@@ -97,7 +103,17 @@ public class Polynome {
             }
             System.out.println("Ajout de " + val + " à la puissance " + pui) ;
         }
+        if(pui >= degres){
+            degres = pui;
+        }
+    }
 
+    public int getDegres() {
+        return degres;
+    }
+
+    public HashMap<Integer, Double> getCoefficientPolynome() {
+        return coefficientPolynome;
     }
 }
 

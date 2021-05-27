@@ -1,14 +1,9 @@
 package fr.projetl3.deltapp.maths;
 
-
-import android.widget.Toast;
-
-import fr.projetl3.deltapp.Accueil;
+import org.jetbrains.annotations.NotNull;
 
 public class Equation2Degre {
     String equation;
-
-    ///////////////////////////////////////////////////////
     private Polynome polynome;
 
     public Equation2Degre(String eq){
@@ -17,12 +12,12 @@ public class Equation2Degre {
         construireEquationSimplifier();
 
     }
-    ///////////////////////////////////////////////////////
 
     public String result(){
         double   a = 0, b = 0, c = 0, delta;
-        String x1, x2;
+        CalculBasique x1, x2;
         String res;
+
         if(polynome.getCoefficientPolynome().containsKey(2)){
             a     = polynome.getCoefficientPolynome().get(2);
         }
@@ -32,22 +27,34 @@ public class Equation2Degre {
         if(polynome.getCoefficientPolynome().containsKey(0)){
             c     = polynome.getCoefficientPolynome().get(0);
         }
-        delta = (long) Math.pow(b, 2) - (4 * a * c);
 
-        if(delta == 0)
-            //res = "X1= -" + b + " / " + (2*a);
-            res = "X1= " +(-b/(2*a)); //+ "\nApprox X1 = " + String.valueOf(deuxa)
-        else if(delta > 0){
-            if(Math.sqrt((double) delta) == (int) Math.sqrt((double) delta)){
-                x1 = "X1 = " + (long) (-b + Math.sqrt((double) delta)) + " / " + (2 * a); //  + "\nApprox X1 = " +String.valueOf((-b-Math.sqrt(delta))/2*a)
-                x2 = "X2 = " + (long) (-b - Math.sqrt((double) delta)) + " / " + (2 * a); //  + "\nApprox X2 = " +String.valueOf((-b+Math.sqrt(delta))/2*a)
-            } else {
-                x1 = "X1 = [" + -b + " + (V" + delta + ")] / " + (2 * a); //  + "\nApprox X1 = " +String.valueOf((-b-Math.sqrt(delta))/2*a)
-                x2 = "X2 = [" + -b + " - (V" + delta + ")] / " + (2 * a); //  + "\nApprox X2 = " +String.valueOf((-b+Math.sqrt(delta))/2*a)
+        if(polynome.getDegres() == 1){
+            res = "X= " +((-1*c)/b);
+        }
+        else{
+            delta = (long) Math.pow(b, 2) - (4 * a * c);
+
+            if(delta == 0)
+                res = "X= " +(-b/(2*a));
+            else if(delta > 0){
+                x1 = new CalculBasique("(" +(-b) +"+" +Math.sqrt(delta) +")/" +(2 * a));
+                x2 = new CalculBasique("(" +(-b) +"-" +Math.sqrt(delta) +")/" +(2 * a));
+                res = "X1 = " +x1.result() + "\nX2 = " +x2.result();
+            } else{
+                String X1;
+                String X2;
+
+                double numerateur = Math.sqrt(-1 * delta) / 2 * a;
+                if(numerateur > 0){
+                    X1 = (-b/2*a) +"+" +numerateur +"i";
+                    X2 = (-b/2*a) +"-" +numerateur +"i";
+                }else{
+                    X1 = (-b/2*a) +"+" +(-numerateur) +"i";
+                    X2 = (-b/2*a) +numerateur +"i";
+                }
+                res = "X1 = " +X1 +"\nX2 = " +X2;
             }
-            res = x1 + "\n" + x2;
-        } else
-            res = "Si vous n'avez pas encore vu les nombres imaginaires, il n'y a pas de solution pour cette équation";
+        }
 
         return res;
     }
@@ -63,18 +70,50 @@ public class Equation2Degre {
         if(polynome.getCoefficientPolynome().containsKey(0)){
             c     = polynome.getCoefficientPolynome().get(0);
         }
-        equation = equation.concat(a + "x² ");
 
-        if(b > 0){equation = equation.concat("+" + b + "x "); } else {equation = equation.concat(b + "x ");}
-        if(c > 0){equation = equation.concat("+" + c + " "); } else {equation = equation.concat(c + " ");}
+        if(a == 1){
+            equation = equation.concat("x² ");
+        }else if(a == -1){
+            equation = equation.concat("-x² ");
+        }else
+            equation = equation.concat(simplifierDec(a,"x² "));
 
+        if(b == 1)
+            equation = equation.concat("+x ");
+        else if(b == -1)
+            equation = equation.concat("-x ");
+        else
+            equation = equation.concat(simplifierDec(b,"x "));
+
+        equation = equation.concat(simplifierDec(c," "));
         equation = equation.concat("= 0");
+    }
+
+    private String simplifierDec(double d,String deg){
+        if(deg.equals("x² ")){
+            if(((long)d) != d){
+                return d +deg;
+            } else
+                return ((long)d) +deg;
+        }else{
+            if(d > 0)
+                if(((long)d) != d){
+                    return "+" +d +deg;
+                } else
+                    return "+" +((long)d) +deg;
+            else
+                if(((long)d) != d){
+                    return d +deg;
+                } else
+                    return ((long)d) +deg;
+        }
     }
 
     public Polynome getPolynome() {
         return polynome;
     }
 
+    @NotNull
     @Override
     public String toString(){
         return equation;

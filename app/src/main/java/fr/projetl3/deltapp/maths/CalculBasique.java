@@ -9,6 +9,9 @@ public class CalculBasique {
         this.expression = new Expression(calc);
     }
 
+    public double result(){
+        return expression.calculate();
+    }
 
     @NotNull
     public String toString(){
