@@ -27,13 +27,10 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +47,7 @@ import java.util.List;
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
-import fr.projetl3.deltapp.maths.Polynome;
+import fr.projetl3.deltapp.maths.Integrale;
 
 public class Accueil extends AppCompatActivity {
 
@@ -185,15 +182,15 @@ public class Accueil extends AppCompatActivity {
                 String equationText = inputCalc.getText().toString().trim();
                 switch (moduleSelected){
                     case "Equation 2nd degre":
-                        // try {
-                        camera_capture.setVisibility(View.GONE);
-                        Equation2Degre eq   = new Equation2Degre(equationText);
-                        Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
-                        result.setText(eq.toString() + "\n" + eq.result());
+                        try {
+                            camera_capture.setVisibility(View.GONE);
+                            Equation2Degre eq   = new Equation2Degre(equationText);
+                            Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
+                            result.setText(eq.toString() + "\n" + eq.result());
 
-                    /*}catch (Exception e){
-                        Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }*/
+                        }catch (Exception e){
+                            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     case "Calculs basique":
                         try {
@@ -204,11 +201,20 @@ public class Accueil extends AppCompatActivity {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    case "Derive":
+                    case "Derivation":
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Derive derive = new Derive(equationText);
                             result.setText(derive.toString());
+                        }catch (Exception e){
+                            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case "Integrale":
+                        try {
+                            camera_capture.setVisibility(View.GONE);
+                            Integrale integrale = new Integrale(equationText);
+                            result.setText(integrale.toString());
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }

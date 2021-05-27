@@ -34,6 +34,7 @@
     <string name="mot_de_passe">MOT DE PASSE</string>
     <string name="confirmation_mot_de_passe">CONFIRMATION MOT DE PASSE</string>
     <string name="login_icon">Login icon</string>
+    <string name="description">Description</string>
 
     <!-- Colors -->
     <color name="white">#FFFFFF</color>
