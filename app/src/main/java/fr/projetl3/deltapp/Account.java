@@ -40,7 +40,8 @@ public class Account extends AppCompatActivity {
     private TextView     email, prenom, nom;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private String       user_id;
+    private String       user_id,emailStr;
+    private ImageView    profilpics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,13 +82,12 @@ public class Account extends AppCompatActivity {
                 User userProfile = snapshot.getValue(User.class);
 
                 if(userProfile != null){
-                    String emailProfile  = userProfile.getEmail();
+                    emailStr = userProfile.getEmail();
                     String prenomProfile = userProfile.getPrenom();
                     String nomProfile    = userProfile.getNom();
-                    Uri    photoProfile  = userProfile.getProfilpics();
-                    importPics(photoProfile);
+                    importPics(emailStr);
 
-                    email.setText("Adresse mail: " + emailProfile);
+                    email.setText("Adresse mail: " + emailStr);
                     prenom.setText("Prénom: " + prenomProfile);
                     nom.setText("Nom: " + nomProfile);
                 } else
@@ -102,11 +102,12 @@ public class Account extends AppCompatActivity {
     }
 
     private void setupUI() {
-        this.retour     = (ImageButton) findViewById(R.id.btn_go_to_main);
-        this.disconnect = (Button)      findViewById(R.id.btnDisconnect);
-        this.email      = (TextView)    findViewById(R.id.tvEmailAccount);
-        this.prenom     = (TextView)    findViewById(R.id.tvPrenomAccount);
-        this.nom        = (TextView)    findViewById(R.id.tvNomAccount);
+        this.retour     = findViewById(R.id.btn_go_to_main);
+        this.disconnect = findViewById(R.id.btnDisconnect);
+        this.email      = findViewById(R.id.tvEmailAccount);
+        this.prenom     = findViewById(R.id.tvPrenomAccount);
+        this.nom        = findViewById(R.id.tvNomAccount);
+        this.profilpics = findViewById(R.id.profilpics);
     }
 
     // Se déconnecter de votre compte.
@@ -132,37 +133,30 @@ public class Account extends AppCompatActivity {
             cursor.close();
             ImageView imageView = findViewById(R.id.profilpics);
             imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-            savePics(selectedImage);
+            savePics(selectedImage,emailStr);
         }
     }
 
-    private void savePics(Uri picturePath){
+    private void savePics(Uri u, String email){
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        StorageReference mountainsRef = storageRef.child("Test.jpg");
-        StorageReference mountainImagesRef = storageRef.child("PhotoProfile/Test.jpg");
-        mountainsRef.getName().equals(mountainImagesRef.getName());    // true
-        mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
-        mountainImagesRef.putFile(picturePath);
+        StorageReference ImagesRef = storageRef.child("PhotoProfile/" +email +".jpg");
+        ImagesRef.getName().equals(ImagesRef.getName());    // true
+        ImagesRef.getPath().equals(ImagesRef.getPath());    // false
+        ImagesRef.putFile(u);
 
     }
 
-    private void importPics(Uri picturePath){
+    private void importPics(String email){
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        StorageReference gsReference = storage.getReferenceFromUrl("gs://deltapp-800f8.appspot.com/PhotoProfile/Test.jpg");
+        StorageReference gsReference = storage.getReferenceFromUrl("gs://deltapp-800f8.appspot.com/PhotoProfile/" +email +".jpg");
 
         final long ONE_MEGABYTE = 5000 * 5000;
-        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                // Data for "images/island.jpg" is returns, use this as needed
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
+
+        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+            profilpics.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));//(gsReference.getPath()));
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
         });
 
     }
