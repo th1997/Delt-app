@@ -119,14 +119,16 @@
 
     <ImageView
         android:id="@+id/iv_camera_capture"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
+        android:layout_width="397dp"
+        android:layout_height="234dp"
+        android:layout_marginBottom="20dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/camera_capture_button_accueil"
-        app:layout_constraintTop_toBottomOf="@+id/input_calc"
+        app:layout_constraintBottom_toTopOf="@+id/calc_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_calc"
+        app:layout_constraintVertical_bias="0.547" />
 
     <ImageView
         android:id="@+id/iv_click_here"
