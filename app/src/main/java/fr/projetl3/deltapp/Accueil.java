@@ -1,6 +1,7 @@
 package fr.projetl3.deltapp;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -18,14 +19,22 @@ import com.google.mlkit.vision.text.TextRecognizer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.util.SparseIntArray;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +59,14 @@ import fr.projetl3.deltapp.maths.Equation2Degre;
 import fr.projetl3.deltapp.maths.Integrale;
 
 public class Accueil extends AppCompatActivity {
+
+    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    static {
+        ORIENTATIONS.append(Surface.ROTATION_0, 0);
+        ORIENTATIONS.append(Surface.ROTATION_90, 90);
+        ORIENTATIONS.append(Surface.ROTATION_180, 180);
+        ORIENTATIONS.append(Surface.ROTATION_270, 270);
+    }
 
     private ImageButton  login, menu;
     private EditText     inputCalc;
@@ -126,6 +143,30 @@ public class Accueil extends AppCompatActivity {
             else
                 calcul();
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private int getRotationCompensation(String cameraId, Activity activity, boolean isFrontFacing)
+            throws CameraAccessException {
+        // Get the device's current rotation relative to its "native" orientation.
+        // Then, from the ORIENTATIONS table, look up the angle the image must be
+        // rotated to compensate for the device's rotation.
+        int deviceRotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int rotationCompensation = ORIENTATIONS.get(deviceRotation);
+
+        // Get the device's sensor orientation.
+        CameraManager cameraManager = (CameraManager) activity.getSystemService(CAMERA_SERVICE);
+        int sensorOrientation = cameraManager
+                .getCameraCharacteristics(cameraId)
+                .get(CameraCharacteristics.SENSOR_ORIENTATION);
+
+        if (isFrontFacing) {
+            rotationCompensation = (sensorOrientation + rotationCompensation) % 360;
+        } else { // back-facing
+            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
+        }
+        return rotationCompensation;
+
     }
 
     private void setupUI(){
@@ -252,7 +293,15 @@ public class Accueil extends AppCompatActivity {
         if (requestCode == 100) {
             Bitmap  captureImage      = BitmapFactory.decodeFile(UriSav.toString());
             TextRecognizer recognizer = TextRecognition.getClient();
-            InputImage     inputImage = InputImage.fromBitmap(captureImage,0 );
+            InputImage     inputImage = null;
+            try {
+                inputImage = InputImage.fromBitmap(captureImage,getRotationCompensation(getCameraId(),this,true));
+                System.out.println(getRotationCompensation(getCameraId(),this,true));
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+            //inputImage = InputImage.fromMediaImage(captureImage, getRotationCompensation(getCameraId(),this,false));
+
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
@@ -318,6 +367,24 @@ public class Accueil extends AppCompatActivity {
         list.add(new Modules("Integrale",this));
 
         return list;
+    }
+
+    private String getCameraId(){
+        String mCameraId = null;
+        CameraManager cameraManager =(CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            for(String cameraId:cameraManager.getCameraIdList()){
+                CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
+                if(cameraCharacteristics.get(CameraCharacteristics.LENS_FACING)==1){
+                    mCameraId = cameraId;
+                    return mCameraId;
+                }
+
+            }
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void selectModule(String moduleName) {

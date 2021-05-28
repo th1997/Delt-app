@@ -156,7 +156,6 @@ public class Account extends AppCompatActivity {
         gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
             profilpics.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));//(gsReference.getPath()));
         }).addOnFailureListener(exception -> {
-            // Handle any errors
         });
 
     }
