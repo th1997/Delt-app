@@ -35,6 +35,8 @@
     <string name="confirmation_mot_de_passe">CONFIRMATION MOT DE PASSE</string>
     <string name="login_icon">Login icon</string>
     <string name="description">Description</string>
+    <string name="informations_personnelles">Informations personnelles</string>
+    <string name="vos_10_derniers_calculs">Vos 10 derniers calculs</string>
 
     <!-- Colors -->
     <color name="white">#FFFFFF</color>

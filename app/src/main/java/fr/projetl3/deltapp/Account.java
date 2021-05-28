@@ -2,6 +2,8 @@ package fr.projetl3.deltapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.projetl3.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,9 +25,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,6 +32,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+
+import fr.projetl3.deltapp.maths.CalculBasique;
+import fr.projetl3.deltapp.maths.Derive;
+import fr.projetl3.deltapp.maths.Equation2Degre;
+import fr.projetl3.deltapp.maths.Integrale;
 
 public class Account extends AppCompatActivity {
     private ImageButton  retour;
@@ -42,6 +48,8 @@ public class Account extends AppCompatActivity {
     private FirebaseUser user;
     private String       user_id,emailStr;
     private ImageView    profilpics;
+    private RecyclerView recyclerView;
+    private ArrayList<?> last10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +116,7 @@ public class Account extends AppCompatActivity {
         this.prenom     = findViewById(R.id.tvPrenomAccount);
         this.nom        = findViewById(R.id.tvNomAccount);
         this.profilpics = findViewById(R.id.profilpics);
+        this.recyclerView = findViewById(R.id.rv10Last);
     }
 
     // Se déconnecter de votre compte.
@@ -158,5 +167,43 @@ public class Account extends AppCompatActivity {
         }).addOnFailureListener(exception -> {
         });
 
+    }
+
+    private void loadLast10(){
+        last10 = new ArrayList<>();
+        DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference usersRef = rootRef.child("last10");
+
+        usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                last10 = snapshot.getValue(ArrayList.class);
+                if(last10 != null){
+                    for(int i = 0; i < last10.size(); i++){
+                        // Ajouter l'équation sauvegarder
+                        if(last10.get(i) instanceof CalculBasique){
+                            CalculBasique cb = (CalculBasique) last10.get(i);
+                            // Ajouter résultat cb
+                        } else if(last10.get(i) instanceof Equation2Degre){
+                            Equation2Degre eq = (Equation2Degre) last10.get(i);
+                            // Ajouter résultat eq
+                        } else if(last10.get(i) instanceof Derive){
+                            Derive dr = (Derive) last10.get(i);
+                            // Ajouter résultat dr
+                        } else if(last10.get(i) instanceof Integrale){
+                            Integrale ig = (Integrale) last10.get(i);
+                            // Ajouter résultat ig
+                        }
+                    }
+                } else
+                    Toast.makeText(Account.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Toast.makeText(Account.this, "Impossible de charger vos 10 dernier calculs!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
