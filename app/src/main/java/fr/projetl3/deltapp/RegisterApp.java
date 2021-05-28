@@ -27,7 +27,6 @@ public class RegisterApp extends AppCompatActivity {
     private EditText     email, nom, prenom, pwd1, pwd2;
     private Button       bRegister;
     private TextView     userLoginPage;
-    private ProgressBar  progressBar;
     private FirebaseAuth mAuth;
 
     @Override
@@ -58,7 +57,6 @@ public class RegisterApp extends AppCompatActivity {
         pwd2          = findViewById(R.id.pwd2Register);
         bRegister     = findViewById(R.id.bRegister);
         userLoginPage = findViewById(R.id.tvLogin);
-        progressBar   = findViewById(R.id.progressBarRegister);
     }
 
 
@@ -95,7 +93,6 @@ public class RegisterApp extends AppCompatActivity {
             pwd2.requestFocus();
         } else {
             try {
-                progressBar.setVisibility(View.VISIBLE);
                 mAuth.createUserWithEmailAndPassword(emailText, pwd1Text).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         User              user     = new User(emailText, nomText, prenomText);
@@ -107,22 +104,18 @@ public class RegisterApp extends AppCompatActivity {
                                 mAuth.getCurrentUser().sendEmailVerification();
                                 Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
                                 Handler handler = new Handler();
-                                progressBar.setVisibility(View.GONE);
                                 handler.postDelayed(() -> startActivity(new Intent(getApplicationContext(), LoginApp.class)),3000);
                             } else {
                                 Toast.makeText(RegisterApp.this, Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_LONG).show();
-                                progressBar.setVisibility(View.GONE);
                             }
                         });
 
                     } else {
                         Toast.makeText(RegisterApp.this, "Erreur lors de l'inscription, veuillez réessayer! " + task.getException(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
                     }
                 });
             } catch (Exception e){
                 Toast.makeText(RegisterApp.this, "User data creation failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
-                progressBar.setVisibility(View.GONE);
             }
         }
     }

@@ -9,16 +9,15 @@
 
     <ImageButton
         android:id="@+id/btn_go_to_main"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:backgroundTint="#FF5722"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#1398FF"
         android:contentDescription="Retour sur la page d'accueil !"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.005"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/abc_vector_test"
         tools:ignore="HardcodedText" />
 
@@ -71,9 +70,35 @@
         android:layout_marginBottom="24dp"
         android:text="@string/disconnectAccount"
         android:textColor="@color/white"
-        android:backgroundTint="@color/red"
+        android:background="@drawable/background_rounded_login"
+        android:backgroundTint="#1398FF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonLoadPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/background_rounded_login"
+        android:backgroundTint="#1398FF"
+        android:text="Photo"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNomAccount" />
+
+    <ImageView
+        android:id="@+id/profilpics"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintBottom_toTopOf="@+id/tvEmailAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvEmailAccount"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

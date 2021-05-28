@@ -1,10 +1,14 @@
 package fr.projetl3.deltapp;
 
+import android.net.Uri;
+
 public class User {
 
-    public String email;
-    public String nom;
-    public String prenom;
+    private String email;
+    private String nom;
+    private String prenom;
+
+    private Uri    profilpics;
 
     public User(String email, String nom, String prenom) {
         this.email  = email;
@@ -16,6 +20,7 @@ public class User {
         this.email  = "Sans email";
         this.nom    = "Sans nom";
         this.prenom = "Sans prenom";
+        profilpics  = null;
     }
 
     public String getEmail() {
@@ -40,5 +45,13 @@ public class User {
 
     public void setPrenom(String prenom) {
         this.prenom = prenom;
+    }
+
+    public void setProfilpics(Uri profilpics) {
+        this.profilpics = profilpics;
+    }
+
+    public Uri getProfilpics() {
+        return profilpics;
     }
 }

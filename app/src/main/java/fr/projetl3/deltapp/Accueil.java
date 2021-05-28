@@ -274,6 +274,7 @@ public class Accueil extends AppCompatActivity {
             camera_capture.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.GONE);
         }
+       // if ()
     }
 
     private  File getOutputMediaFile() throws URISyntaxException {

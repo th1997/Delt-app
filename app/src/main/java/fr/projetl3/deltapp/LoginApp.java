@@ -26,7 +26,6 @@ public class LoginApp extends AppCompatActivity {
     private EditText    email, pwd;
     private Button      bLogin;
     private TextView    userRegisterPage;
-    private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
     @SuppressLint("ResourceAsColor")
@@ -84,10 +83,10 @@ public class LoginApp extends AppCompatActivity {
     }
 
     private void setupUIView() {
-        this.retour           = (ImageButton) findViewById(R.id.btn_go_to_main);
-        this.userRegisterPage = (TextView)    findViewById(R.id.tvRegister);
-        this.email            = (EditText)    findViewById(R.id.emailLogin);
-        this.pwd              = (EditText)    findViewById(R.id.pwdLogin);
-        this.bLogin           = (Button)      findViewById(R.id.btnLogin);
+        this.retour           = findViewById(R.id.btn_go_to_main);
+        this.userRegisterPage = findViewById(R.id.tvRegister);
+        this.email            = findViewById(R.id.emailLogin);
+        this.pwd              = findViewById(R.id.pwdLogin);
+        this.bLogin           = findViewById(R.id.btnLogin);
     }
 }
