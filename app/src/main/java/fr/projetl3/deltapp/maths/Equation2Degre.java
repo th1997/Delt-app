@@ -13,19 +13,31 @@ public class Equation2Degre {
 
     }
 
+    public String getEquation() {
+        return equation;
+    }
+
+    public void setEquation(String equation) {
+        this.equation = equation;
+    }
+
+    public void setPolynome(Polynome polynome) {
+        this.polynome = polynome;
+    }
+
     public String result(){
         double   a = 0, b = 0, c = 0, delta;
         CalculBasique x1, x2;
         String res;
 
-        if(polynome.getCoefficientPolynome().containsKey(2)){
-            a     = polynome.getCoefficientPolynome().get(2);
+        if(polynome.getCoefficientPolynome().containsKey("2")){
+            a     = polynome.getCoefficientPolynome().get("2");
         }
-        if(polynome.getCoefficientPolynome().containsKey(1)){
-            b     = polynome.getCoefficientPolynome().get(1);
+        if(polynome.getCoefficientPolynome().containsKey("1")){
+            b     = polynome.getCoefficientPolynome().get("1");
         }
-        if(polynome.getCoefficientPolynome().containsKey(0)){
-            c     = polynome.getCoefficientPolynome().get(0);
+        if(polynome.getCoefficientPolynome().containsKey("0")){
+            c     = polynome.getCoefficientPolynome().get("0");
         }
 
         if(polynome.getDegres() == 1){
@@ -39,7 +51,7 @@ public class Equation2Degre {
             else if(delta > 0){
                 x1 = new CalculBasique("(" +(-b) +"+" +Math.sqrt(delta) +")/" +(2 * a));
                 x2 = new CalculBasique("(" +(-b) +"-" +Math.sqrt(delta) +")/" +(2 * a));
-                res = "X1 = " +x1.result() + "\nX2 = " +x2.result();
+                res = "X1 = " +x1.getResult() + "\nX2 = " +x2.getResult();
             } else{
                 String X1;
                 String X2;
@@ -61,14 +73,14 @@ public class Equation2Degre {
 
     private void construireEquationSimplifier(){
         double a = 0, b = 0, c = 0;
-        if(polynome.getCoefficientPolynome().containsKey(2)){
-            a     = polynome.getCoefficientPolynome().get(2);
+        if(polynome.getCoefficientPolynome().containsKey("2")){
+            a     = polynome.getCoefficientPolynome().get("2");
         }
-        if(polynome.getCoefficientPolynome().containsKey(1)){
-            b     = polynome.getCoefficientPolynome().get(1);
+        if(polynome.getCoefficientPolynome().containsKey("1")){
+            b     = polynome.getCoefficientPolynome().get("1");
         }
-        if(polynome.getCoefficientPolynome().containsKey(0)){
-            c     = polynome.getCoefficientPolynome().get(0);
+        if(polynome.getCoefficientPolynome().containsKey("0")){
+            c     = polynome.getCoefficientPolynome().get("0");
         }
 
         if(a == 1){

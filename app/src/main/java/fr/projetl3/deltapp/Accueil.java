@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
@@ -37,7 +38,6 @@ import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.SparseIntArray;
@@ -89,7 +89,7 @@ public class Accueil extends AppCompatActivity {
     private String       moduleSelected;
     private FirebaseAuth mAuth;
     private RecyclerView recyclerView;
-    private ArrayList last10;
+    private ArrayList<Object> last10;
 
     public static final String LOG_TAG = "AndroidExample";
 
@@ -239,7 +239,7 @@ public class Accueil extends AppCompatActivity {
                             Equation2Degre eq   = new Equation2Degre(equationText);
                             Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
                             result.setText(eq.toString() + "\n" + eq.result());
-
+                            savelast10(eq);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -249,6 +249,7 @@ public class Accueil extends AppCompatActivity {
                             camera_capture.setVisibility(View.GONE);
                             CalculBasique calculBasique = new CalculBasique(equationText);
                             result.setText(calculBasique.toString());
+                            savelast10(calculBasique);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -268,7 +269,8 @@ public class Accueil extends AppCompatActivity {
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Integrale integrale = new Integrale(equationText);
-                            result.setText(integrale.toString());
+                            result.setText(integrale.getResult().toString());
+                            savelast10(integrale);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -411,20 +413,20 @@ public class Accueil extends AppCompatActivity {
         try {
             data.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(arrayList).addOnCompleteListener(task1 -> {
                 if (task1.isSuccessful()) {
-                    Toast.makeText(Accueil.this, "Sauvegarde réussi !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Accueil.this, "Sauvegarde réussi !", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(Accueil.this, Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(Accueil.this, Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } catch (Exception e){
-            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void savelast10(Object o){
         try {
-            if(!user.isAnonymous()){
+            if(user != null){
                 last10 = new ArrayList<>();
                 String user_id = user.getUid();
                 DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
@@ -434,15 +436,13 @@ public class Accueil extends AppCompatActivity {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        ArrayList arrayList = new ArrayList<>();
+                        GenericTypeIndicator<ArrayList<Object>> al = new GenericTypeIndicator<ArrayList<Object>>(){};
+                        ArrayList<Object> arrayList = new ArrayList<>();
                         arrayList.add(o);
-                        last10 = snapshot.getValue(ArrayList.class);
+                        last10 = snapshot.getValue(al);
                         if (last10 != null) {
-                            Toast.makeText(Accueil.this, "Crash #1", Toast.LENGTH_LONG).show();
                             if (last10.size() == 10){last10.remove(9); }
-                            Toast.makeText(Accueil.this, "Crash #2", Toast.LENGTH_LONG).show();
                             arrayList.addAll(last10);
-                            Toast.makeText(Accueil.this, "Crash #3", Toast.LENGTH_LONG).show();
                             saveArrayList(arrayList, usersRef);
                         } else {
                             //Toast.makeText(Accueil.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
