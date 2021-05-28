@@ -13,6 +13,7 @@ import com.example.projetl3.R;
 public class ModuleViewHolder extends RecyclerView.ViewHolder {
     protected ImageView modulePicsView;
     protected TextView moduleNameView;
+    protected TextView moduleDescView;
     protected CardView cardView;
 
     // @itemView: recyclerview_item_layout.xml
@@ -22,6 +23,7 @@ public class ModuleViewHolder extends RecyclerView.ViewHolder {
         this.modulePicsView = itemView.findViewById(R.id.imageView_module);
         this.moduleNameView = itemView.findViewById(R.id.textView_moduleName);
         this.cardView = itemView.findViewById(R.id.card_view);
+        this.moduleDescView = itemView.findViewById(R.id.tv_desc);
 
     }
 }

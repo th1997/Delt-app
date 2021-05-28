@@ -311,10 +311,10 @@ public class Accueil extends AppCompatActivity {
     private  List<Modules> getListData() {
         List<Modules> list = new ArrayList<>();
 
-        list.add(new Modules("Calculs basique"));
-        list.add(new Modules("Equation 2nd degre"));
-        list.add(new Modules("Derivation"));
-        list.add(new Modules("Integrale"));
+        list.add(new Modules("Calculs basique",this));
+        list.add(new Modules("Equation 2nd degre",this));
+        list.add(new Modules("Derivation",this));
+        list.add(new Modules("Integrale",this));
 
         return list;
     }

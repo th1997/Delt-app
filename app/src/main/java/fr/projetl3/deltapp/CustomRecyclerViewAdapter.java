@@ -46,6 +46,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<ModuleViewHo
         // Bind data to viewholder
         holder.modulePicsView.setImageResource(imageResId);
         holder.moduleNameView.setText(modules1.getModuleName() );
+        holder.moduleDescView.setText(modules1.getDescription() );
         holder.itemView.setOnClickListener(v -> {
 
             //Toast.makeText(this.context,"Click 2 = " + modules1.getModuleName(), Toast.LENGTH_LONG).show();
