@@ -5,14 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetl3.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -34,6 +33,7 @@ import android.widget.Toast;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
@@ -49,7 +49,7 @@ public class Account extends AppCompatActivity {
     private String       user_id,emailStr;
     private ImageView    profilpics;
     private RecyclerView recyclerView;
-    private ArrayList<?> last10;
+    private ArrayList<HashMap<String, String>> last10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +98,7 @@ public class Account extends AppCompatActivity {
                     email.setText("Adresse mail: " + emailStr);
                     prenom.setText("Prénom: " + prenomProfile);
                     nom.setText("Nom: " + nomProfile);
+                    loadlast10();
                 } else
                     Toast.makeText(Account.this, "Couldn't load user class profile!", Toast.LENGTH_LONG).show();
             }
@@ -169,41 +170,52 @@ public class Account extends AppCompatActivity {
 
     }
 
-    private void loadLast10(){
-        last10 = new ArrayList<>();
-        DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference usersRef = rootRef.child("last10");
+    private void loadlast10(){
+        try {
+            if(user != null){
+                last10 = new ArrayList<>();
+                String user_id = user.getUid();
+                DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference usersRef = rootRef.child("last10");
 
-        usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                last10 = snapshot.getValue(ArrayList.class);
-                if(last10 != null){
-                    for(int i = 0; i < last10.size(); i++){
-                        // Ajouter l'équation sauvegarder
-                        if(last10.get(i) instanceof CalculBasique){
-                            CalculBasique cb = (CalculBasique) last10.get(i);
-                            // Ajouter résultat cb
-                        } else if(last10.get(i) instanceof Equation2Degre){
-                            Equation2Degre eq = (Equation2Degre) last10.get(i);
-                            // Ajouter résultat eq
-                        } else if(last10.get(i) instanceof Derive){
-                            Derive dr = (Derive) last10.get(i);
-                            // Ajouter résultat dr
-                        } else if(last10.get(i) instanceof Integrale){
-                            Integrale ig = (Integrale) last10.get(i);
-                            // Ajouter résultat ig
+                usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        GenericTypeIndicator<ArrayList<HashMap<String, String>>> al = new GenericTypeIndicator<ArrayList<HashMap<String, String>>>(){};
+                        HashMap<String, String> hashMap = new HashMap<>();
+                        last10 = snapshot.getValue(al);
+                        if (last10 != null) {
+                            int nbcalc = 0, nbeq = 0, nbder = 0, nbint = 0, nberror = 0;
+                            for(int i = 0; i < last10.size(); i++){
+                                hashMap = last10.get(i);
+                                if(hashMap.containsKey("Calculs basique")){
+                                    nbcalc++;
+                                } else if(hashMap.containsKey("Equation 2nd degre")){
+                                    nbeq++;
+                                } else if(hashMap.containsKey("Derivation")){
+                                    nbder++;
+                                } else if(hashMap.containsKey("Integrale")){
+                                    nbint++;
+                                } else {
+                                    nberror++;
+                                }
+                            }
+                            Toast.makeText(Account.this, "Calc= " + nbcalc + ", Eq= " + nbcalc + ", Der= " + nbder + ", Int= " + nbint + "\nError= " + nberror, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(Account.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
                         }
                     }
-                } else
-                    Toast.makeText(Account.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
-            }
 
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                Toast.makeText(Account.this, "Impossible de charger vos 10 dernier calculs!", Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(Account.this, "Impossible de charger vos 10 dernier calculs!", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-        });
+        } catch (Exception e){
+            Toast.makeText(Account.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
     }
 }

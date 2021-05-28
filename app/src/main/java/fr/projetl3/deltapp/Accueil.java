@@ -60,6 +60,7 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,7 +90,7 @@ public class Accueil extends AppCompatActivity {
     private String       moduleSelected;
     private FirebaseAuth mAuth;
     private RecyclerView recyclerView;
-    private ArrayList<Object> last10;
+    private ArrayList<HashMap<String, String>> last10;
 
     public static final String LOG_TAG = "AndroidExample";
 
@@ -239,7 +240,7 @@ public class Accueil extends AppCompatActivity {
                             Equation2Degre eq   = new Equation2Degre(equationText);
                             Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
                             result.setText(eq.toString() + "\n" + eq.result());
-                            savelast10(eq);
+                            savelast10("Equation 2nd degre", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -249,7 +250,7 @@ public class Accueil extends AppCompatActivity {
                             camera_capture.setVisibility(View.GONE);
                             CalculBasique calculBasique = new CalculBasique(equationText);
                             result.setText(calculBasique.toString());
-                            savelast10(calculBasique);
+                            savelast10("Calculs basique", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -260,7 +261,7 @@ public class Accueil extends AppCompatActivity {
                             Derive derive = new Derive(equationText);
                             String text = "f(" + derive.getSymbole() + ") = " + derive.getFonction() + "\nf'(" + derive.getSymbole() + ") = " + derive.getResult();
                             result.setText(text);
-                            savelast10(derive);
+                            savelast10("Derivation", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -270,7 +271,7 @@ public class Accueil extends AppCompatActivity {
                             camera_capture.setVisibility(View.GONE);
                             Integrale integrale = new Integrale(equationText);
                             result.setText(integrale.getResult().toString());
-                            savelast10(integrale);
+                            savelast10("Integrale", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -409,7 +410,7 @@ public class Accueil extends AppCompatActivity {
         camera_button.setBackgroundResource(R.drawable.rounded_button);
     }
 
-    private void saveArrayList(ArrayList<Object> arrayList, DatabaseReference data){
+    private void saveArrayList(ArrayList<HashMap<String, String>> arrayList, DatabaseReference data){
         try {
             data.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(arrayList).addOnCompleteListener(task1 -> {
                 if (task1.isSuccessful()) {
@@ -424,7 +425,7 @@ public class Accueil extends AppCompatActivity {
 
     }
 
-    private void savelast10(Object o){
+    private void savelast10(String name, String expression){
         try {
             if(user != null){
                 last10 = new ArrayList<>();
@@ -436,9 +437,11 @@ public class Accueil extends AppCompatActivity {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<Object>> al = new GenericTypeIndicator<ArrayList<Object>>(){};
-                        ArrayList<Object> arrayList = new ArrayList<>();
-                        arrayList.add(o);
+                        GenericTypeIndicator<ArrayList<HashMap<String, String>>> al = new GenericTypeIndicator<ArrayList<HashMap<String, String>>>(){};
+                        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+                        HashMap<String, String> hashMap = new HashMap<>();
+                        hashMap.put(name, expression);
+                        arrayList.add(hashMap);
                         last10 = snapshot.getValue(al);
                         if (last10 != null) {
                             if (last10.size() == 10){last10.remove(9); }
