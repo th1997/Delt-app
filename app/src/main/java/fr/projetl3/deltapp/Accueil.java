@@ -1,5 +1,6 @@
 package fr.projetl3.deltapp;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,11 @@ import com.example.projetl3.R;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
@@ -31,6 +37,7 @@ import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.SparseIntArray;
@@ -43,6 +50,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 
 import java.lang.reflect.Method;
@@ -52,6 +61,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
@@ -79,6 +89,7 @@ public class Accueil extends AppCompatActivity {
     private String       moduleSelected;
     private FirebaseAuth mAuth;
     private RecyclerView recyclerView;
+    private ArrayList last10;
 
     public static final String LOG_TAG = "AndroidExample";
 
@@ -248,6 +259,7 @@ public class Accueil extends AppCompatActivity {
                             Derive derive = new Derive(equationText);
                             String text = "f(" + derive.getSymbole() + ") = " + derive.getFonction() + "\nf'(" + derive.getSymbole() + ") = " + derive.getResult();
                             result.setText(text);
+                            savelast10(derive);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -394,4 +406,60 @@ public class Accueil extends AppCompatActivity {
         title.setText(moduleName);
         camera_button.setBackgroundResource(R.drawable.rounded_button);
     }
+
+    private void saveArrayList(ArrayList<Object> arrayList, DatabaseReference data){
+        try {
+            data.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(arrayList).addOnCompleteListener(task1 -> {
+                if (task1.isSuccessful()) {
+                    Toast.makeText(Accueil.this, "Sauvegarde réussi !", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(Accueil.this, Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (Exception e){
+            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void savelast10(Object o){
+        try {
+            if(!user.isAnonymous()){
+                last10 = new ArrayList<>();
+                String user_id = user.getUid();
+                DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference usersRef = rootRef.child("last10");
+
+                usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        ArrayList arrayList = new ArrayList<>();
+                        arrayList.add(o);
+                        last10 = snapshot.getValue(ArrayList.class);
+                        if (last10 != null) {
+                            Toast.makeText(Accueil.this, "Crash #1", Toast.LENGTH_LONG).show();
+                            if (last10.size() == 10){last10.remove(9); }
+                            Toast.makeText(Accueil.this, "Crash #2", Toast.LENGTH_LONG).show();
+                            arrayList.addAll(last10);
+                            Toast.makeText(Accueil.this, "Crash #3", Toast.LENGTH_LONG).show();
+                            saveArrayList(arrayList, usersRef);
+                        } else {
+                            //Toast.makeText(Accueil.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
+                            saveArrayList(arrayList, usersRef);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(Accueil.this, "Impossible de charger vos 10 dernier calculs!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        } catch (Exception e){
+            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
 }
