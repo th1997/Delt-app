@@ -20,6 +20,8 @@ import com.google.firebase.storage.StorageReference;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -62,6 +64,20 @@ public class Account extends AppCompatActivity {
     private ArrayList<HashMap<String, String>> last10;
     private boolean mSpinnerInitialized;
 
+    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
+    private static final String THEMES = "fr.projetl3.deltapp.themes";
+    private boolean IS_DARK;
+
+
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        SharedPreferences preferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        IS_DARK = preferences.getBoolean(THEMES, false);
+        if(IS_DARK){ theme.applyStyle(R.style.daynight, true); } else { theme.applyStyle(R.style.light, true); }
+        return theme;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,34 +104,39 @@ public class Account extends AppCompatActivity {
             startActivity(mainActivity);
             finish();
         });
-        /*
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                SharedPreferences preferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+                IS_DARK = preferences.getBoolean(THEMES, false);
                 if (!mSpinnerInitialized) {
                     mSpinnerInitialized = true;
                     return;
                 }
                 String text = spinner.getSelectedItem().toString();
                 if(text.equalsIgnoreCase("clair")){
-                    if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-                        setTheme(R.style.AppTheme);
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                        Toast.makeText(Account.this, "Mode clair activé.", Toast.LENGTH_SHORT).show();
+                    if(IS_DARK){
+                        setTheme(R.style.light);
+                        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREF, MODE_PRIVATE).edit();
+                        editor.putBoolean(THEMES, false);
+                        //Toast.makeText(Account.this, "Mode clair activé.", Toast.LENGTH_SHORT).show();
+                        editor.apply();
                         reset();
                     }
                     return;
                 } else if(text.equalsIgnoreCase("sombre")){
-                    if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO){
-                        setTheme(R.style.AppTheme);
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                        Toast.makeText(Account.this, "Mode sombre activé.", Toast.LENGTH_SHORT).show();
+                    if(!IS_DARK){
+                        setTheme(R.style.daynight);
+                        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREF, MODE_PRIVATE).edit();
+                        editor.putBoolean(THEMES, true);
+                        editor.apply();
+                        IS_DARK = preferences.getBoolean(THEMES, false);
+                        //Toast.makeText(Account.this, "Mode sombre activé. (ISDARK="+IS_DARK+")", Toast.LENGTH_SHORT).show();
                         reset();
                     }
                     return;
-                } else {
-                    Toast.makeText(Account.this, "Mauvaise sélection.", Toast.LENGTH_SHORT).show();
                 }
+                return;
             }
 
             @Override
@@ -125,7 +146,7 @@ public class Account extends AppCompatActivity {
 
         });
 
-         */
+
     }
 
     private void reset() {
@@ -137,7 +158,6 @@ public class Account extends AppCompatActivity {
     private void loadUserProfile() {
         DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
         DatabaseReference usersRef = rootRef.child("users");
-
         usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -167,10 +187,18 @@ public class Account extends AppCompatActivity {
     }
 
     private void loadSpinner() {
-        String[] arraySpinner = {"Clair", "Sombre"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        if(IS_DARK){
+            String[] arraySpinner = {"Thèmes appliqué : Sombre", "Clair"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+        } else {
+            String[] arraySpinner = {"Thèmes appliqué : Clair", "Sombre"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+        }
+
     }
 
     private void setupUI() {
@@ -183,14 +211,6 @@ public class Account extends AppCompatActivity {
             this.profilpics   = findViewById(R.id.profilpics);
             this.recyclerView = findViewById(R.id.rv10Last);
             this.spinner      = findViewById(R.id.themes);
-            /*
-            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-                setTheme(R.style.DarkTheme);
-            } else {
-                setTheme(R.style.AppTheme);
-            }
-
-             */
         } catch (Exception e){
             Toast.makeText(Account.this, "Erreur : " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
