@@ -2,6 +2,7 @@ package fr.projetl3.deltapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetl3.R;
@@ -34,11 +35,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 import fr.projetl3.deltapp.maths.Integrale;
+import fr.projetl3.deltapp.maths.SyntaxException;
+import fr.projetl3.deltapp.recyclerViews.LastCalcAdapter;
 
 public class Account extends AppCompatActivity {
     private ImageButton  retour;
@@ -183,25 +187,60 @@ public class Account extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                         GenericTypeIndicator<ArrayList<HashMap<String, String>>> al = new GenericTypeIndicator<ArrayList<HashMap<String, String>>>(){};
-                        HashMap<String, String> hashMap = new HashMap<>();
+                        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+                        HashMap<String, String> hashMap;
+                        HashMap<String, String> hashMap2 = new HashMap<>();
+
+                        String moduleName = "", formule = "", resultat = "";
                         last10 = snapshot.getValue(al);
                         if (last10 != null) {
-                            int nbcalc = 0, nbeq = 0, nbder = 0, nbint = 0, nberror = 0;
                             for(int i = 0; i < last10.size(); i++){
                                 hashMap = last10.get(i);
+                                hashMap2 = new HashMap<>();
                                 if(hashMap.containsKey("Calculs basique")){
-                                    nbcalc++;
+                                    moduleName = "Calculs basique";
+                                    formule = hashMap.get(moduleName);
+                                    CalculBasique cb = new CalculBasique(formule);
+                                    resultat = String.valueOf(cb.getResult());
                                 } else if(hashMap.containsKey("Equation 2nd degre")){
-                                    nbeq++;
+                                    moduleName = "Equation 2nd degre";
+                                    formule = hashMap.get(moduleName);
+                                    Equation2Degre eq = new Equation2Degre(formule);
+                                    resultat = eq.getResult();
                                 } else if(hashMap.containsKey("Derivation")){
-                                    nbder++;
+                                    moduleName = "Derivation";
+                                    formule = hashMap.get(moduleName);
+                                    Derive derive = new Derive(formule);
+                                    formule = "f(" + derive.getSymbole() + ") = ".concat(formule);
+                                    resultat = "f'(" + derive.getSymbole() + ") = ".concat(derive.getResult());
                                 } else if(hashMap.containsKey("Integrale")){
-                                    nbint++;
+                                    moduleName = "Integrale";
+                                    formule = hashMap.get(moduleName);
+                                    try {
+                                        Integrale integrale = new Integrale(formule);
+                                        resultat = String.valueOf(integrale.getResult());
+                                    } catch (SyntaxException e) {
+                                        moduleName = "";
+                                        formule = "";
+                                        resultat = "";
+                                    }
+
                                 } else {
-                                    nberror++;
+                                    moduleName = "";
+                                    formule = "";
+                                    resultat = "";
                                 }
+                                hashMap2.put("moduleName", moduleName);
+                                hashMap2.put("formule", formule);
+                                hashMap2.put("resultat", resultat);
+                                arrayList.add(hashMap2);
                             }
-                            Toast.makeText(Account.this, "Calc= " + nbcalc + ", Eq= " + nbcalc + ", Der= " + nbder + ", Int= " + nbint + "\nError= " + nberror, Toast.LENGTH_LONG).show();
+                            recyclerView.setAdapter(new LastCalcAdapter(arrayList, Account.this));
+
+                            // RecyclerView scroll vertical
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Account.this, LinearLayoutManager.VERTICAL, false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+
                         } else {
                             Toast.makeText(Account.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
                         }

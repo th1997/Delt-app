@@ -239,7 +239,7 @@ public class Accueil extends AppCompatActivity {
                             camera_capture.setVisibility(View.GONE);
                             Equation2Degre eq   = new Equation2Degre(equationText);
                             Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
-                            result.setText(eq.toString() + "\n" + eq.result());
+                            result.setText(eq.toString() + "\n" + eq.getResult());
                             savelast10("Equation 2nd degre", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();

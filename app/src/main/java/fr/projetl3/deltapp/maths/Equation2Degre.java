@@ -3,7 +3,7 @@ package fr.projetl3.deltapp.maths;
 import org.jetbrains.annotations.NotNull;
 
 public class Equation2Degre {
-    String equation;
+    private String equation;
     private Polynome polynome;
 
     public Equation2Degre(String eq){
@@ -25,7 +25,7 @@ public class Equation2Degre {
         this.polynome = polynome;
     }
 
-    public String result(){
+    public String getResult(){
         double   a = 0, b = 0, c = 0, delta;
         CalculBasique x1, x2;
         String res;
