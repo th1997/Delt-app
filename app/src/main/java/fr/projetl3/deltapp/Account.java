@@ -287,57 +287,62 @@ public class Account extends AppCompatActivity {
 
                         String moduleName = "", formule = "", resultat = "";
                         last10 = snapshot.getValue(al);
-                        if (last10 != null) {
-                            for(int i = 0; i < last10.size(); i++){
-                                hashMap = last10.get(i);
-                                hashMap2 = new HashMap<>();
-                                if(hashMap.containsKey("Calculs basique")){
-                                    moduleName = "Calculs basique";
-                                    formule = hashMap.get(moduleName);
-                                    CalculBasique cb = new CalculBasique(formule);
-                                    resultat = String.valueOf(cb.getResult());
-                                } else if(hashMap.containsKey("Equation 2nd degre")){
-                                    moduleName = "Equation 2nd degre";
-                                    formule = hashMap.get(moduleName);
-                                    Equation2Degre eq = new Equation2Degre(formule);
-                                    resultat = eq.getResult();
-                                } else if(hashMap.containsKey("Derivation")){
-                                    moduleName = "Derivation";
-                                    formule = hashMap.get(moduleName);
-                                    Derive derive = new Derive(formule);
-                                    formule = "f(" + derive.getSymbole() + ") = ".concat(formule);
-                                    resultat = "f'(" + derive.getSymbole() + ") = ".concat(derive.getResult());
-                                } else if(hashMap.containsKey("Integrale")){
-                                    moduleName = "Integrale";
-                                    formule = hashMap.get(moduleName);
-                                    try {
-                                        Integrale integrale = new Integrale(formule);
-                                        resultat = String.valueOf(integrale.getResult());
-                                    } catch (SyntaxException e) {
+                        try {
+                            if (last10 != null) {
+                                for(int i = 0; i < last10.size(); i++){
+                                    hashMap = last10.get(i);
+                                    hashMap2 = new HashMap<>();
+                                    if(hashMap.containsKey("Calculs basique")){
+                                        moduleName = "Calculs basique";
+                                        formule = hashMap.get(moduleName);
+                                        CalculBasique cb = new CalculBasique(formule);
+                                        resultat = String.valueOf(cb.getResult());
+                                    } else if(hashMap.containsKey("Equation 2nd degre")){
+                                        moduleName = "Equation 2nd degre";
+                                        formule = hashMap.get(moduleName);
+                                        Equation2Degre eq = new Equation2Degre(formule);
+                                        resultat = eq.getResult();
+                                    } else if(hashMap.containsKey("Derivation")){
+                                        moduleName = "Derivation";
+                                        formule = hashMap.get(moduleName);
+                                        Derive derive = new Derive(formule);
+                                        formule = "f(" + derive.getSymbole() + ") = ".concat(formule);
+                                        resultat = "f'(" + derive.getSymbole() + ") = ".concat(derive.getResult());
+                                    } else if(hashMap.containsKey("Integrale")){
+                                        moduleName = "Integrale";
+                                        formule = hashMap.get(moduleName);
+                                        try {
+                                            Integrale integrale = new Integrale(formule);
+                                            resultat = String.valueOf(integrale.getResult());
+                                        } catch (SyntaxException e) {
+                                            moduleName = "";
+                                            formule = "";
+                                            resultat = "";
+                                        }
+
+                                    } else {
                                         moduleName = "";
                                         formule = "";
                                         resultat = "";
                                     }
-
-                                } else {
-                                    moduleName = "";
-                                    formule = "";
-                                    resultat = "";
+                                    hashMap2.put("moduleName", moduleName);
+                                    hashMap2.put("formule", formule);
+                                    hashMap2.put("resultat", resultat);
+                                    arrayList.add(hashMap2);
                                 }
-                                hashMap2.put("moduleName", moduleName);
-                                hashMap2.put("formule", formule);
-                                hashMap2.put("resultat", resultat);
-                                arrayList.add(hashMap2);
+                                recyclerView.setAdapter(new LastCalcAdapter(arrayList, Account.this));
+
+                                // RecyclerView scroll vertical
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Account.this, LinearLayoutManager.VERTICAL, false);
+                                recyclerView.setLayoutManager(linearLayoutManager);
+
+                            } else {
+                                Toast.makeText(Account.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
                             }
-                            recyclerView.setAdapter(new LastCalcAdapter(arrayList, Account.this));
-
-                            // RecyclerView scroll vertical
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Account.this, LinearLayoutManager.VERTICAL, false);
-                            recyclerView.setLayoutManager(linearLayoutManager);
-
-                        } else {
-                            Toast.makeText(Account.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
+                        }catch (Exception e){
+                            Toast.makeText(Account.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
+
                     }
 
                     @Override
