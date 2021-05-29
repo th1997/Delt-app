@@ -2,6 +2,7 @@ package fr.projetl3.deltapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,9 +26,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,13 +58,15 @@ public class Account extends AppCompatActivity {
     private String       user_id,emailStr;
     private ImageView    profilpics;
     private RecyclerView recyclerView;
+    private Spinner      spinner;
     private ArrayList<HashMap<String, String>> last10;
+    private boolean mSpinnerInitialized;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-
+        mSpinnerInitialized = false;
         mAuth = FirebaseAuth.getInstance();
         user  = mAuth.getCurrentUser();
         assert user != null;
@@ -81,6 +88,50 @@ public class Account extends AppCompatActivity {
             startActivity(mainActivity);
             finish();
         });
+        /*
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (!mSpinnerInitialized) {
+                    mSpinnerInitialized = true;
+                    return;
+                }
+                String text = spinner.getSelectedItem().toString();
+                if(text.equalsIgnoreCase("clair")){
+                    if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+                        setTheme(R.style.AppTheme);
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        Toast.makeText(Account.this, "Mode clair activé.", Toast.LENGTH_SHORT).show();
+                        reset();
+                    }
+                    return;
+                } else if(text.equalsIgnoreCase("sombre")){
+                    if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO){
+                        setTheme(R.style.AppTheme);
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                        Toast.makeText(Account.this, "Mode sombre activé.", Toast.LENGTH_SHORT).show();
+                        reset();
+                    }
+                    return;
+                } else {
+                    Toast.makeText(Account.this, "Mauvaise sélection.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+         */
+    }
+
+    private void reset() {
+        Intent intent = new Intent(getApplicationContext(), Account.class);
+        startActivity(intent);
+        finish();
     }
 
     private void loadUserProfile() {
@@ -103,6 +154,7 @@ public class Account extends AppCompatActivity {
                     prenom.setText("Prénom: " + prenomProfile);
                     nom.setText("Nom: " + nomProfile);
                     loadlast10();
+                    loadSpinner();
                 } else
                     Toast.makeText(Account.this, "Couldn't load user class profile!", Toast.LENGTH_LONG).show();
             }
@@ -114,14 +166,36 @@ public class Account extends AppCompatActivity {
         });
     }
 
+    private void loadSpinner() {
+        String[] arraySpinner = {"Clair", "Sombre"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
     private void setupUI() {
-        this.retour     = findViewById(R.id.btn_go_to_main);
-        this.disconnect = findViewById(R.id.btnDisconnect);
-        this.email      = findViewById(R.id.tvEmailAccount);
-        this.prenom     = findViewById(R.id.tvPrenomAccount);
-        this.nom        = findViewById(R.id.tvNomAccount);
-        this.profilpics = findViewById(R.id.profilpics);
-        this.recyclerView = findViewById(R.id.rv10Last);
+        try {
+            this.retour       = findViewById(R.id.btn_go_to_main);
+            this.disconnect   = findViewById(R.id.btnDisconnect);
+            this.email        = findViewById(R.id.tvEmailAccount);
+            this.prenom       = findViewById(R.id.tvPrenomAccount);
+            this.nom          = findViewById(R.id.tvNomAccount);
+            this.profilpics   = findViewById(R.id.profilpics);
+            this.recyclerView = findViewById(R.id.rv10Last);
+            this.spinner      = findViewById(R.id.themes);
+            /*
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+                setTheme(R.style.DarkTheme);
+            } else {
+                setTheme(R.style.AppTheme);
+            }
+
+             */
+        } catch (Exception e){
+            Toast.makeText(Account.this, "Erreur : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     // Se déconnecter de votre compte.

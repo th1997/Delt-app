@@ -120,10 +120,15 @@ public class Accueil extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         login.setOnClickListener(v -> {
-            if(user != null)
-                startActivity(new Intent(getApplicationContext(), Account.class));
-            else
-                startActivity(new Intent(getApplicationContext(), LoginApp.class));
+            try {
+                if(user != null)
+                    startActivity(new Intent(getApplicationContext(), Account.class));
+                else
+                    startActivity(new Intent(getApplicationContext(), LoginApp.class));
+            } catch (Exception e){
+                Toast.makeText(Accueil.this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
         });
 
         camera_button.setOnClickListener(v -> {

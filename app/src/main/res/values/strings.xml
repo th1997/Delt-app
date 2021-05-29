@@ -37,6 +37,7 @@
     <string name="description">Description</string>
     <string name="informations_personnelles">Informations personnelles</string>
     <string name="vos_10_derniers_calculs">Vos 10 derniers calculs</string>
+    <string name="photo_de_profil">Photo de profil</string>
 
     <!-- Colors -->
     <color name="white">#FFFFFF</color>

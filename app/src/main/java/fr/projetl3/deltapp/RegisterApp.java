@@ -103,6 +103,7 @@ public class RegisterApp extends AppCompatActivity {
                             if (task1.isSuccessful()) {
                                 mAuth.getCurrentUser().sendEmailVerification();
                                 Toast.makeText(RegisterApp.this, "L'utilisateur à bien été enregistré !\nUn mail de vérification a été envoyé!", Toast.LENGTH_LONG).show();
+                                mAuth.signOut();
                                 Handler handler = new Handler();
                                 handler.postDelayed(() -> startActivity(new Intent(getApplicationContext(), LoginApp.class)),3000);
                             } else {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/bgc"
     tools:context="fr.projetl3.deltapp.Account">
 
     <ImageButton
@@ -30,7 +30,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="@string/informations_personnelles"
-        android:textColor="@color/black"
+        android:textColor="?attr/tc"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -44,7 +44,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/emailText"
-        android:textColor="@color/black"
+        android:textColor="?attr/tc"
 
         app:layout_constraintBottom_toTopOf="@+id/tvPrenomAccount"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/prenomText"
-        android:textColor="@color/black"
+        android:textColor="?attr/tc"
         app:layout_constraintBottom_toTopOf="@+id/tvNomAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +72,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/nomText"
-        android:textColor="#000000"
+        android:textColor="?attr/tc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPrenomAccount" />
@@ -94,7 +94,7 @@
         android:gravity="center"
         android:text="@string/vos_10_derniers_calculs"
         android:textStyle="bold"
-        android:textColor="#000000"
+        android:textColor="?attr/tc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/themes" />
@@ -120,7 +120,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/background_rounded_login"
         android:backgroundTint="#1398FF"
-        android:text="Photo de profil"
+        android:text="@string/photo_de_profil"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.627"
