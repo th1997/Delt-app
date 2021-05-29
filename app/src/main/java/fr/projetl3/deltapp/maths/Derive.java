@@ -12,7 +12,7 @@ public class Derive {
     private ArrayList<String> complexe; // Contient toutes les fonctions "complexes" exemple fonction cosinus
 
     // Constructeur sans symbole
-    public Derive(String expression){
+    public Derive(String expression) throws Exception{
         this.expression = expression;
         this.list = new ArrayList<>();
         this.listDerive = new ArrayList<>();
@@ -23,7 +23,7 @@ public class Derive {
     }
 
     // Constructeur qui prend un paramètre symbole pour forcer l'utilisation d'un symbole
-    public Derive(String expression, String symbole){
+    public Derive(String expression, String symbole) throws Exception{
         this.expression = expression;
         this.list = new ArrayList<>();
         this.listDerive = new ArrayList<>();
@@ -99,7 +99,7 @@ public class Derive {
     }
 
     // Va générer la liste des dérivé grâce à la liste des expressions en dérivant chaque partie.
-    private void derive(){
+    private void derive() throws Exception{
         String str;
         for(int i = 0; i < list.size(); i++){
             str = fprime(list.get(i));
@@ -120,35 +120,52 @@ public class Derive {
     }
 
     // Va dérivé et renvoyer l'expression passé en paramètre
-    private String fprime(String f){
+    private String fprime(String f) throws Exception{
         String[] split;
         String str = "", u, v;
         Derive dr;
         int pui;
         String coeff;
         if(f.contains(symbole)){
-            if(stringContainsComplexe(f)){
+            if(stringContainsComplexe(f) || ( (f.startsWith("(") && f.endsWith(")") && (f.contains("/") || f.contains("*"))))){
                 if(f.startsWith("(") && f.endsWith(")")){
                     f = f.substring(1, f.length() - 1);
                     String uprime, vprime;
                     if(f.contains("/") && !f.contains("*")){ // u*v -> [((u' * v) - (u * v')) / v²]
                         split = f.split("/", 2);
                         if(split[0].isEmpty() || split[1].isEmpty()){
-                            // THROW SYNTAX
+                            throw new Exception("Erreur: (" + f + "), il manque des valeurs avant/après la division.");
                         } else {
                             u = split[0]; v = split[1];
                             dr = new Derive(u, symbole); uprime = dr.getResult();
                             dr = new Derive(v, symbole); vprime = dr.getResult();
+                            System.out.println("U= " + u + "\nV=" + v + "\nU'=" + uprime + "\nV'=" + vprime);
                             if(uprime.isEmpty()){ uprime = "0"; }
                             if(vprime.isEmpty()){ vprime = "0"; }
+
                             if(isDouble(uprime) && Double.parseDouble(uprime) == 1){ str = str.concat("[" + v + " - "); }
                             else if(isDouble(uprime) && Double.parseDouble(uprime) == -1){ str = str.concat("[-(" + v + ") - "); }
-                            else if(isDouble(uprime) && Double.parseDouble(uprime) == 0){ str = str.concat("["); }
+                            else if(isDouble(uprime) && Double.parseDouble(uprime) == 0){ str = str.concat("[-"); }
+
+                            else if(isDouble(v) && Double.parseDouble(v) == 1){ str = str.concat("[" + uprime + " - "); }
+                            else if(isDouble(v) && Double.parseDouble(v) == -1){ str = str.concat("[-(" + uprime + ") - "); }
+                            else if(isDouble(v) && Double.parseDouble(v) == 0){ str = str.concat("[-"); }
+
                             else { str = str.concat("[(" + uprime + " * " + v + ") - "); }
 
                             if(isDouble(vprime) && Double.parseDouble(vprime) == 1){ str = str.concat(u); }
                             else if(isDouble(vprime) && Double.parseDouble(vprime) == -1){ str = str.concat("-(" + u + ")"); }
-                            else { str = str.concat("(" + u + " * " + vprime + ")"); }
+                            else if(isDouble(vprime) && Double.parseDouble(vprime) == 0){ str = str.concat("0"); }
+
+                            else if(isDouble(u) && Double.parseDouble(u) == 1){ str = str.concat(vprime); }
+                            else if(isDouble(u) && Double.parseDouble(u) == -1){ str = str.concat("-(" + vprime + ")"); }
+                            else if(isDouble(u) && Double.parseDouble(u) == 0){
+                                if(str.startsWith("[-") && str.length() == 2){ str = "0";}
+                                else { str = str.substring(0, str.length() - 3);}
+                            }
+                            else { str = str.concat("(" + u + " * " + vprime + ")");
+
+                            }
 
                             str = str.concat(" / (" + v + ")²]");
                         }
@@ -264,7 +281,7 @@ public class Derive {
                     // On vérifie que la puissance existe sinon on part du principe qu'elle vaut 1
                     if(split[1].isEmpty()){ pui = 1; } else { pui = Integer.parseInt(split[1]); }
                     // On vérifie que la puissance et positive sinon on lance une erreur de syntaxe, puissance négative -> 1/x
-                    if(pui < 1){ /* Throw syntax error */}
+                    if(pui < 1){ throw new Exception("Seul les puissances positive sont acceptés!");}
                     // Si la puissance vaut 1 on retourne une valeur sans x
                     if(pui == 1){ str = coeff; }
                     // Si la puissance vaut 2 on retourne une valeur avec un x sans puissance après car x puissance 1 = x
@@ -279,7 +296,7 @@ public class Derive {
                         else { str = Double.parseDouble(coeff) * pui + symbole+ (pui-1); }
                     }
                 } catch(Exception e){
-                    // Throw syntax error exception
+                    throw new Exception("Erreur de syntaxe détecter, veuillez vérifier la syntaxe!");
                 }
             }
         }
@@ -356,8 +373,3 @@ public class Derive {
 
 
 }
-
-
-
-
-
