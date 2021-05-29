@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_Accueil"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="5sp"
+    android:layout_marginTop="5sp"
+    android:layout_marginRight="5sp"
+    android:layout_marginBottom="5sp"
+    android:background="#00000000"
+    android:backgroundTint="#00000000"
+    app:cardBackgroundColor="#00000000"
+    app:cardCornerRadius="40dp"
+    app:cardElevation="0dp"
+    app:cardMaxElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/fond_cardview"
+        app:backgroundColor="#00000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView_moduleAccueil"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="@string/desc_module_picture"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/textView_moduleNameAccueil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nom_du_module"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_moduleAccueil" />
+
+        <TextView
+            android:id="@+id/tv_descAccueil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_moduleNameAccueil" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

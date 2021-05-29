@@ -1,4 +1,4 @@
-package fr.projetl3.deltapp;
+package fr.projetl3.deltapp.recyclerViews;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,6 +14,9 @@ import com.example.projetl3.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import fr.projetl3.deltapp.Accueil;
+import fr.projetl3.deltapp.Modules;
 
 public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<ModuleViewHolder> {
 
@@ -32,7 +35,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<ModuleViewHo
     @Override
     public ModuleViewHolder onCreateViewHolder(@NotNull final ViewGroup parent, int viewType) {
         // Inflate view from recyclerview_item_layout.xml
-        View recyclerViewItem = mLayoutInflater.inflate(R.layout.recyclerview_item_layout, parent, false);
+        View recyclerViewItem = mLayoutInflater.inflate(R.layout.recyclerview_accueil_layout, parent, false);
 
         recyclerViewItem.setOnClickListener(v -> handleRecyclerItemClick( (RecyclerView)parent, v));
         return new ModuleViewHolder(recyclerViewItem);

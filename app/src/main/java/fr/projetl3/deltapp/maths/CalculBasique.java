@@ -4,7 +4,7 @@ import org.mariuszgromada.math.mxparser.*;
 
 public class CalculBasique {
     private Expression expression;
-    private String expr;
+    private final String expr;
     private double result;
 
     public CalculBasique(String calc){

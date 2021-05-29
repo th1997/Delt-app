@@ -20,7 +20,7 @@
     <!-- Accueil -->
     <string name="module_equation_2nd">Équation du 2nd degré</string>
     <string name="module_basic_maths" tools:ignore="Typos">Calculs basiques (+-*/)</string>
-    <string name="modules_selection_title">SÉLECTION DU MODULE</string>
+    <string name="modules_selection_title">HOME</string>
     <string name="calculer_button">Calculer</string>
     <string name="durand">Durand</string>
     <string name="desc_module_picture">Module Picture</string>

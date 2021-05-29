@@ -1,4 +1,4 @@
-package fr.projetl3.deltapp;
+package fr.projetl3.deltapp.recyclerViews;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,10 +20,10 @@ public class ModuleViewHolder extends RecyclerView.ViewHolder {
     public ModuleViewHolder(@NonNull View itemView) {
         super(itemView);
 
-        this.modulePicsView = itemView.findViewById(R.id.imageView_module);
-        this.moduleNameView = itemView.findViewById(R.id.textView_moduleName);
-        this.cardView = itemView.findViewById(R.id.card_view);
-        this.moduleDescView = itemView.findViewById(R.id.tv_desc);
+        this.modulePicsView = itemView.findViewById(R.id.imageView_moduleAccueil);
+        this.moduleNameView = itemView.findViewById(R.id.textView_moduleNameAccueil);
+        this.cardView = itemView.findViewById(R.id.cv_Accueil);
+        this.moduleDescView = itemView.findViewById(R.id.tv_descAccueil);
 
     }
 }

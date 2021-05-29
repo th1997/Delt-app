@@ -68,6 +68,7 @@ import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 import fr.projetl3.deltapp.maths.Integrale;
+import fr.projetl3.deltapp.recyclerViews.CustomRecyclerViewAdapter;
 
 public class Accueil extends AppCompatActivity {
 
@@ -116,7 +117,7 @@ public class Accueil extends AppCompatActivity {
         recyclerView.setAdapter(new CustomRecyclerViewAdapter(this, modules));
 
         // RecyclerView scroll vertical
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         login.setOnClickListener(v -> {
@@ -143,7 +144,7 @@ public class Accueil extends AppCompatActivity {
                 // Ouvre camera et caches la selection des modules.
                 isModuleSelected = false;
                 switchUIvisibility();
-                moduleSelected = "SÉLECTION DU MODULE";
+                moduleSelected = "HOME";
                 camera_button.setBackgroundResource(R.drawable.rounded_button_disabled);
                 title.setText(moduleSelected);
                 inputCalc.setText("");
@@ -320,7 +321,6 @@ public class Accueil extends AppCompatActivity {
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
-            //inputImage = InputImage.fromMediaImage(captureImage, getRotationCompensation(getCameraId(),this,false));
 
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
