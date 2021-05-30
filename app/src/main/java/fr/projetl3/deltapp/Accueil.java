@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -106,6 +107,7 @@ public class Accueil extends AppCompatActivity {
     private ArrayList<HashMap<String, String>> last10;
 
     public static final String LOG_TAG = "AndroidExample";
+
 
     @Override
     public Resources.Theme getTheme() {
@@ -336,15 +338,15 @@ public class Accueil extends AppCompatActivity {
 
         if (requestCode == 100) {
             Bitmap  captureImage      = BitmapFactory.decodeFile(UriSav.toString());
+            int rotation = getImageOrientation(this, UriSav.toString());
+            Toast.makeText(Accueil.this, "Rotation = " + rotation, Toast.LENGTH_LONG).show();
             TextRecognizer recognizer = TextRecognition.getClient();
             InputImage     inputImage = null;
             try {
-                inputImage = InputImage.fromBitmap(captureImage, 0); // ,getRotationCompensation(getCameraId(),this,true)
+                inputImage = InputImage.fromBitmap(captureImage, rotation); // ,getRotationCompensation(getCameraId(),this,true)
             } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
-            int rotation = getImageOrientation(this, UriSav.toString());
-            Toast.makeText(Accueil.this, "Rotation = " + rotation, Toast.LENGTH_LONG).show();
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
