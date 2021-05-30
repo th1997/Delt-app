@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Patterns;
@@ -28,6 +30,18 @@ public class LoginApp extends AppCompatActivity {
     private Button      bLogin;
     private TextView    userRegisterPage;
     private FirebaseAuth mAuth;
+
+    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
+    private static final String THEMES = "fr.projetl3.deltapp.themes";
+    private boolean IS_DARK;
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        SharedPreferences preferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        IS_DARK = preferences.getBoolean(THEMES, false);
+        if(IS_DARK){ theme.applyStyle(R.style.daynight, true); } else { theme.applyStyle(R.style.light, true); }
+        return theme;
+    }
 
     @SuppressLint("ResourceAsColor")
     @Override

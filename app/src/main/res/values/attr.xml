@@ -5,6 +5,10 @@
         <attr name="themesTextColor" format="color" />
         <attr name="themesAccueilTitle" format="color"/>
         <attr name="themesAccueilBackground" format="color"/>
-        <attr name="themesCalcButton" format="color"/>
+        <attr name="themesButton" format="color"/>
+        <attr name="themesEditTextBorder" format="color"/>
+        <attr name="themesRevertEditTextBorder" format="color"/>
+        <attr name="themesTextColorAccount" format="color"/>
+        <attr name="themesImageViewLogin" format="color"/>
     </declare-styleable>
 </resources>

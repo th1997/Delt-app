@@ -2,6 +2,7 @@ package fr.projetl3.deltapp;
 
 import android.content.Context;
 import android.os.Environment;
+import android.widget.Toast;
 
 import com.example.projetl3.R;
 
@@ -51,7 +52,16 @@ public class Modules {
                 if(line.equals("<" +moduleName +">"))
                     find = true;
                 else if(find)
-                    description = description + line;
+                    if(line.contains("\n")){
+                        String split[] = line.split("\n");
+                        for (String s : split) {
+                            description = description.concat("\n" + s);
+                            System.out.println(description);
+                        }
+                    } else {
+                        description = description.concat(line);
+                    }
+
             }
         } catch (IOException e) {
             e.printStackTrace();

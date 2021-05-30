@@ -38,6 +38,7 @@
     <string name="informations_personnelles">Informations personnelles</string>
     <string name="vos_10_derniers_calculs">Vos 10 derniers calculs</string>
     <string name="photo_de_profil">Photo de profil</string>
+    <string name="michel">Michel</string>
 
     <!-- Colors -->
     <color name="white">#FFFFFF</color>
@@ -49,5 +50,6 @@
     <color name="firefly">#133337</color>
     <color name="mineshaft">#302d2d</color>
     <color name="laspalmas">#D0ED12</color>
+    <color name="bluebutton">#1398FF</color>
 
 </resources>

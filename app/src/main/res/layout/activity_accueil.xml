@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/themesBackgroundColor"
     tools:context="fr.projetl3.deltapp.Accueil">
 
     <ImageView
@@ -130,7 +130,7 @@
         android:layout_width="193dp"
         android:layout_height="55dp"
         android:layout_marginBottom="35dp"
-        android:background="?attr/themesCalcButton"
+        android:background="?attr/themesButton"
         android:text="@string/calculer_button"
         android:textColor="?attr/themesTextColor"
         android:textSize="20sp"
@@ -185,6 +185,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
+        android:textColor="?attr/themesTextColor"
         app:layout_constraintBottom_toTopOf="@id/camera_capture_button_accueil"
         app:layout_constraintTop_toBottomOf="@id/tv_module_title"
         app:layout_constraintEnd_toEndOf="@+id/tv_module_title"

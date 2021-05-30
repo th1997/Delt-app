@@ -82,9 +82,7 @@ import fr.projetl3.deltapp.recyclerViews.CustomRecyclerViewAdapter;
 
 public class Accueil extends AppCompatActivity {
 
-    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
-    private static final String THEMES = "fr.projetl3.deltapp.themes";
-    private boolean IS_DARK;
+
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -109,7 +107,9 @@ public class Accueil extends AppCompatActivity {
 
     public static final String LOG_TAG = "AndroidExample";
 
-
+    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
+    private static final String THEMES = "fr.projetl3.deltapp.themes";
+    private boolean IS_DARK;
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
