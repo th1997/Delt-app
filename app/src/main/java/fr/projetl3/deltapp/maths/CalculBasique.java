@@ -31,7 +31,7 @@ public class CalculBasique {
 
     @NotNull
     public String toString(){
-        return "Resultat de : " + expression.getExpressionString() + " = " +  expression.calculate();
+        return "Resultat de : " +expr + " = " +result;
     }
 
 }

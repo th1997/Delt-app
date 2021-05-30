@@ -300,7 +300,7 @@ public class Accueil extends AppCompatActivity {
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Integrale integrale = new Integrale(equationText);
-                            result.setText(integrale.getResult().toString());
+                            result.setText(integrale.toString());
                             savelast10("Integrale", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();

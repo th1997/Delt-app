@@ -9,11 +9,11 @@ public class Integrale {
     private String expr;
     private Double result;
 
-    public Integrale(String integrale) throws SyntaxException {
+    public Integrale(String integral) throws SyntaxException {
         try {
-            this.integrale = new Expression(integrale);
-            result = this.integrale.calculate();
+            this.integrale = new Expression(integral);
             expr = this.integrale.getExpressionString();
+            result = integrale.calculate();
         } catch (Exception e){
             throw new SyntaxException("Le programme indique qu'une erreur de syntaxe a été envoyé, veuillez vérifier la syntaxe requise pour les intégrales.");
         }
@@ -34,5 +34,9 @@ public class Integrale {
 
     public Double getResult() {
         return result;
+    }
+
+    public String toString(){
+        return "Resultat de : " + expr + " = " +result;
     }
 }
