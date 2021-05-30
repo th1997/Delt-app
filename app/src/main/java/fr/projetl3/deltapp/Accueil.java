@@ -27,22 +27,26 @@ import com.google.mlkit.vision.text.TextRecognizer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.View;
@@ -57,6 +61,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -317,7 +322,7 @@ public class Accueil extends AppCompatActivity {
             File file = getOutputMediaFile();
             Uri uri = Uri.fromFile(file);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            //intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, 100);
         } catch (Exception e){
@@ -338,7 +343,8 @@ public class Accueil extends AppCompatActivity {
             } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
-
+            int rotation = getImageOrientation(this, UriSav.toString());
+            Toast.makeText(Accueil.this, "Rotation = " + rotation, Toast.LENGTH_LONG).show();
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
@@ -406,24 +412,6 @@ public class Accueil extends AppCompatActivity {
         return list;
     }
 
-    private String getCameraId(){
-        String mCameraId = null;
-        CameraManager cameraManager =(CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            for(String cameraId:cameraManager.getCameraIdList()){
-                CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
-                if(cameraCharacteristics.get(CameraCharacteristics.LENS_FACING)==1){
-                    mCameraId = cameraId;
-                    return mCameraId;
-                }
-
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public void selectModule(String moduleName) {
         moduleSelected   = moduleName;
         isModuleSelected = true;
@@ -485,6 +473,95 @@ public class Accueil extends AppCompatActivity {
             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    // ROTATION :
+    public int getImageOrientation(Context context, String imagePath) {
+        int orientation = getOrientationFromExif(imagePath);
+        if(orientation <= 0) {
+            orientation = getOrientationFromMediaStore(context, imagePath);
+        }
+
+        return orientation;
+    }
+
+    private int getOrientationFromExif(String imagePath) {
+        int orientation = -1;
+        try {
+            ExifInterface exif = new ExifInterface(imagePath);
+            int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+
+            switch (exifOrientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    orientation = 270;
+
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    orientation = 180;
+
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    orientation = 90;
+
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+                    orientation = 0;
+
+                    break;
+                default:
+                    break;
+            }
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to get image exif orientation", e);
+        }
+
+        return orientation;
+    }
+
+    private int getOrientationFromMediaStore(Context context, String imagePath) {
+        Uri imageUri = getImageContentUri(context, imagePath);
+        if(imageUri == null) {
+            return -1;
+        }
+
+        String[] projection = {MediaStore.Images.ImageColumns.ORIENTATION};
+        Cursor cursor = context.getContentResolver().query(imageUri, projection, null, null, null);
+
+        int orientation = -1;
+        if (cursor != null && cursor.moveToFirst()) {
+            orientation = cursor.getInt(0);
+            cursor.close();
+        }
+
+        return orientation;
+    }
+
+    private Uri getImageContentUri(Context context, String imagePath) {
+        String[] projection = new String[] {MediaStore.Images.Media._ID};
+        String selection = MediaStore.Images.Media.DATA + "=? ";
+        String[] selectionArgs = new String[] {imagePath};
+        Uri IMAGE_PROVIDER_URI = Uri.fromFile(new File(imagePath));
+        Cursor cursor = context.getContentResolver().query(IMAGE_PROVIDER_URI, projection,
+                selection, selectionArgs, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int imageId = cursor.getInt(0);
+            cursor.close();
+
+            return Uri.withAppendedPath(IMAGE_PROVIDER_URI, Integer.toString(imageId));
+        }
+
+        if (new File(imagePath).exists()) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DATA, imagePath);
+
+            return context.getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        }
+
+        return null;
     }
 
 }
