@@ -77,6 +77,7 @@ import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 import fr.projetl3.deltapp.maths.Integrale;
+import fr.projetl3.deltapp.maths.SyntaxException;
 import fr.projetl3.deltapp.recyclerViews.CustomRecyclerViewAdapter;
 
 public class Accueil extends AppCompatActivity {
@@ -122,6 +123,7 @@ public class Accueil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         try {
             Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
             m.invoke(null);
@@ -189,32 +191,6 @@ public class Accueil extends AppCompatActivity {
         });
     }
 
-    /*
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private int getRotationCompensation(String cameraId, Activity activity, boolean isFrontFacing)
-            throws CameraAccessException {
-        // Get the device's current rotation relative to its "native" orientation.
-        // Then, from the ORIENTATIONS table, look up the angle the image must be
-        // rotated to compensate for the device's rotation.
-        int deviceRotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        int rotationCompensation = ORIENTATIONS.get(deviceRotation);
-
-        // Get the device's sensor orientation.
-        CameraManager cameraManager = (CameraManager) activity.getSystemService(CAMERA_SERVICE);
-        int sensorOrientation = cameraManager
-                .getCameraCharacteristics(cameraId)
-                .get(CameraCharacteristics.SENSOR_ORIENTATION);
-
-        if (isFrontFacing) {
-            rotationCompensation = (sensorOrientation + rotationCompensation) % 360;
-        } else { // back-facing
-            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
-        }
-        return rotationCompensation;
-
-    }
-    */
-
     private void setupUI(){
         login          = findViewById(R.id.login_button_accueil);
         menu           = findViewById(R.id.menu_button_accueil);
@@ -266,13 +242,17 @@ public class Accueil extends AppCompatActivity {
         try {
             if(isModuleSelected){
                 String equationText = inputCalc.getText().toString().trim();
+                result.setText("");
                 switch (moduleSelected){
                     case "Equation 2nd degre":
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Equation2Degre eq   = new Equation2Degre(equationText);
-                            Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
-                            result.setText(eq.toString() + "\n" + eq.getResult());
+                            String str = eq.toString() + "\n" + eq.getResult();
+                            if(str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf")){
+                                throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
+                            }
+                            result.setText(str);
                             savelast10("Equation 2nd degre", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -350,6 +330,7 @@ public class Accueil extends AppCompatActivity {
             } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
+            result.setText("");
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
@@ -359,7 +340,7 @@ public class Accueil extends AppCompatActivity {
                                 break;
                             }
                         }
-                        Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
                         inputCalc.setText(blockText);
                     })
                     .addOnFailureListener(
@@ -371,7 +352,6 @@ public class Accueil extends AppCompatActivity {
             camera_capture.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.GONE);
         }
-       // if ()
     }
 
     private  File getOutputMediaFile() throws URISyntaxException {
