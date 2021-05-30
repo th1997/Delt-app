@@ -29,6 +29,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -163,6 +164,7 @@ public class Accueil extends AppCompatActivity {
         });
     }
 
+    /*
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private int getRotationCompensation(String cameraId, Activity activity, boolean isFrontFacing)
             throws CameraAccessException {
@@ -186,6 +188,7 @@ public class Accueil extends AppCompatActivity {
         return rotationCompensation;
 
     }
+    */
 
     private void setupUI(){
         login          = (ImageButton) findViewById(R.id.login_button_accueil);
@@ -300,6 +303,7 @@ public class Accueil extends AppCompatActivity {
             File file = getOutputMediaFile();
             Uri uri = Uri.fromFile(file);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, 100);
         } catch (Exception e){
@@ -316,9 +320,8 @@ public class Accueil extends AppCompatActivity {
             TextRecognizer recognizer = TextRecognition.getClient();
             InputImage     inputImage = null;
             try {
-                inputImage = InputImage.fromBitmap(captureImage,getRotationCompensation(getCameraId(),this,true));
-                System.out.println(getRotationCompensation(getCameraId(),this,true));
-            } catch (CameraAccessException e) {
+                inputImage = InputImage.fromBitmap(captureImage, 0); // ,getRotationCompensation(getCameraId(),this,true)
+            } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
 
@@ -471,3 +474,35 @@ public class Accueil extends AppCompatActivity {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
