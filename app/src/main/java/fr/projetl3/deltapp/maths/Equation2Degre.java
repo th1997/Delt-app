@@ -47,11 +47,11 @@ public class Equation2Degre {
             delta = (long) Math.pow(b, 2) - (4 * a * c);
 
             if(delta == 0)
-                res = "X= " +(-b/(2*a));
+                res = "X= " +(-b) +" / " +(2*a) +" = " +(-b/(2*a));
             else if(delta > 0){
                 x1 = new CalculBasique("(" +(-b) +"+" +Math.sqrt(delta) +")/" +(2 * a));
                 x2 = new CalculBasique("(" +(-b) +"-" +Math.sqrt(delta) +")/" +(2 * a));
-                res = "X1 = " +x1.getResult() + "\nX2 = " +x2.getResult();
+                res = "X1 = " +(-b) +" -√" +(Math.pow(b,2)-4*a*c) +" / " +(2*a) +" = " +x1.getResult() + "\nX2 = " +(-b) +" +√" +(Math.pow(b,2)-4*a*c) +" / " +(2*a) +" = " +x2.getResult();
             } else{
                 String X1;
                 String X2;
@@ -64,7 +64,7 @@ public class Equation2Degre {
                     X1 = (-b/2*a) +"+" +(-numerateur) +"i";
                     X2 = (-b/2*a) +numerateur +"i";
                 }
-                res = "X1 = " +X1 +"\nX2 = " +X2;
+                res = "X1 = " +(-b) +" -√" +(Math.pow(b,2)-4*a*c) +"i / " +(2*a) +" = " +X1 +"\nX2 = " +(-b) +" +√" +(Math.pow(b,2)-4*a*c) +"i / " +(2*a) +" = " +X2;
             }
         }
 

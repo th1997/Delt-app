@@ -93,7 +93,7 @@ public class Accueil extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 270);
     }
 
-    private ImageButton  login, menu;
+    private ImageButton  login, menu, keyboardbutn;
     private EditText     inputCalc;
     private Button       camera_button, calc;
     private TextView     title, result;
@@ -183,6 +183,10 @@ public class Accueil extends AppCompatActivity {
             else
                 calcul();
         });
+
+        keyboardbutn.setOnClickListener(v->{
+
+        });
     }
 
     /*
@@ -212,20 +216,19 @@ public class Accueil extends AppCompatActivity {
     */
 
     private void setupUI(){
-        login          = (ImageButton) findViewById(R.id.login_button_accueil);
-        menu           = (ImageButton) findViewById(R.id.menu_button_accueil);
-        camera_button  = (Button)      findViewById(R.id.camera_capture_button_accueil);
-        click_here     = (ImageView)   findViewById(R.id.iv_click_here);
+        login          = findViewById(R.id.login_button_accueil);
+        menu           = findViewById(R.id.menu_button_accueil);
+        camera_button  = findViewById(R.id.camera_capture_button_accueil);
+        click_here     = findViewById(R.id.iv_click_here);
 
-        title          = (TextView)    findViewById(R.id.tv_module_title);
+        title          = findViewById(R.id.tv_module_title);
+        calc           = findViewById(R.id.calc_button);
+        result         = findViewById(R.id.tv_result);
 
-        calc           = (Button)      findViewById(R.id.calc_button);
-        result         = (TextView)    findViewById(R.id.tv_result);
-
-        inputCalc      = (EditText)    findViewById(R.id.input_calc);
-
-        camera_capture = (ImageView)   findViewById(R.id.iv_camera_capture);
-        recyclerView   = (RecyclerView) findViewById(R.id.recyclerView);
+        inputCalc      = findViewById(R.id.input_calc);
+        keyboardbutn   = findViewById(R.id.keyboardbtn);
+        camera_capture = findViewById(R.id.iv_camera_capture);
+        recyclerView   = findViewById(R.id.recyclerView);
 
         try {
             recyclerView.setVisibility(View.VISIBLE);
@@ -233,7 +236,6 @@ public class Accueil extends AppCompatActivity {
         } catch (Exception e){
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void switchUIvisibility(){
@@ -242,9 +244,10 @@ public class Accueil extends AppCompatActivity {
             calc.setVisibility(View.VISIBLE);
             result.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.VISIBLE);
-
+            keyboardbutn.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
             recyclerView.setAlpha(0);
+            menu.setVisibility(View.VISIBLE);
 
         } else {
             inputCalc.setVisibility(View.GONE);
@@ -252,11 +255,11 @@ public class Accueil extends AppCompatActivity {
             result.setVisibility(View.GONE);
             camera_capture.setVisibility(View.GONE);
             click_here.setVisibility(View.GONE);
-
+            keyboardbutn.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setAlpha(1);
+            menu.setVisibility(View.GONE);
         }
-
     }
 
     private void calcul(){
