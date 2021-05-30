@@ -12,8 +12,14 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Color -->
+        <item name="themesAccueilBackground">#EEEEEE</item>
+        <item name="themesAccueilTitle">@color/black</item>
         <item name="themesBackgroundColor">@color/white</item>
         <item name="themesTextColor">@color/black</item>
+        <item name="themesCalcButton">@color/firefly</item>
+
     </style>
 
     <style name="daynight" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
@@ -21,7 +27,13 @@
         <item name="colorPrimary">@color/colorPrimaryNight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
         <item name="colorAccent">@color/colorAccentNight</item>
+
+        <!-- Color -->
+        <item name="themesAccueilBackground">#111111</item>
+        <item name="themesAccueilTitle">@color/white</item>
         <item name="themesBackgroundColor">@color/black</item>
         <item name="themesTextColor">@color/white</item>
+        <item name="themesCalcButton">#ecccc8</item>
+
     </style>
 </resources>

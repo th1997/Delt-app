@@ -3,5 +3,8 @@
     <declare-styleable name="dt">
         <attr name="themesBackgroundColor" format="color" />
         <attr name="themesTextColor" format="color" />
+        <attr name="themesAccueilTitle" format="color"/>
+        <attr name="themesAccueilBackground" format="color"/>
+        <attr name="themesCalcButton" format="color"/>
     </declare-styleable>
 </resources>

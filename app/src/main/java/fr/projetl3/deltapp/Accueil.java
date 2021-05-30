@@ -29,8 +29,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.CameraAccessException;
@@ -73,6 +75,10 @@ import fr.projetl3.deltapp.recyclerViews.CustomRecyclerViewAdapter;
 
 public class Accueil extends AppCompatActivity {
 
+    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
+    private static final String THEMES = "fr.projetl3.deltapp.themes";
+    private boolean IS_DARK;
+
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 0);
@@ -96,6 +102,14 @@ public class Accueil extends AppCompatActivity {
 
     public static final String LOG_TAG = "AndroidExample";
 
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        SharedPreferences preferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        IS_DARK = preferences.getBoolean(THEMES, false);
+        if(IS_DARK){ theme.applyStyle(R.style.daynight, true); } else { theme.applyStyle(R.style.light, true); }
+        return theme;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
