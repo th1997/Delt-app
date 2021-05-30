@@ -339,7 +339,7 @@ public class Accueil extends AppCompatActivity {
         if (requestCode == 100) {
             Bitmap  captureImage      = BitmapFactory.decodeFile(UriSav.toString());
             int rotation = getImageOrientation(this, UriSav.toString());
-            Toast.makeText(Accueil.this, "Rotation = " + rotation, Toast.LENGTH_LONG).show();
+            Toast.makeText(Accueil.this, "Rotation =  " + rotation, Toast.LENGTH_LONG).show();
             TextRecognizer recognizer = TextRecognition.getClient();
             InputImage     inputImage = null;
             try {
