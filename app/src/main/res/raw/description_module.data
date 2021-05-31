@@ -11,9 +11,9 @@ Exemple : 2x2+2x-2=0 ou encore 4x2+1x+2=2x2-x+4
 </Equation 2nd degre>
 
 <Derivation>
-Va retourner la dérivé de la fonction\n
-Syntaxe : f(x) ou der(symbole)=f(symbole).\n
-La dérivation prend en charge les fonctions suivantes: axn (=ax^n), (a/b)xn, cos(u), sin(u), tan(u), sqrt(u), ln(u), log(u), (u/v), (u*v).\n
+Retourne la dérivé de la fonction\n
+Syntaxe : f(x) ou der(a)=f(a).\n
+La dérivation prend en charge les fonctions suivantes: axn, (a/b)xn, cos/sin/tan/sqrt/ln/log(u), (u/v), (u*v).\n
 \n
 Exemple : cos(ln(x)) ou der(y)=sin((1/4)x4)
 </Derivation>
