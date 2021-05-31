@@ -261,4 +261,15 @@
         app:layout_constraintTop_toBottomOf="@+id/iv_camera_capture"
         app:srcCompat="@android:drawable/ic_delete" />
 
+    <ImageButton
+        android:id="@+id/infoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/tv_module_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_dialog_info" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

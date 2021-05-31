@@ -90,7 +90,7 @@ public class Accueil extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 270);
     }
 
-    private ImageButton login, menu, keyboardbutn, report_button;
+    private ImageButton login, menu, keyboardbutn, report_button, infos;
     private EditText inputCalc,varIntgr, IntgrSup, IntgrInf;
     private Button camera_button, calc;
     private TextView title, result;
@@ -194,6 +194,10 @@ public class Accueil extends AppCompatActivity {
 
         });
 
+        infos.setOnClickListener(v -> {
+            redirectInfos();
+        });
+
         report_button.setOnClickListener(v -> {
             try {
                 saveReportPics();
@@ -203,40 +207,40 @@ public class Accueil extends AppCompatActivity {
         });
     }
 
-    private void saveReportPics() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd:MM:yyyy-HH:mm:ss");
-        Uri u = Uri.fromFile(new File(UriSav.getPath()));
-        Date date = new Date();
-        System.out.println(formatter.format(date));
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        StorageReference ImagesRef = storageRef.child("report/" + user.getEmail() + "/"+ date + ".jpg");
-        //Toast.makeText(Accueil.this, "OCRText = " + lastOCRtext, Toast.LENGTH_SHORT).show();
-
-        // Create file metadata including the content type
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("detectedText", lastOCRtext)
-                .build();
-        ImagesRef.putFile(u).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(@NonNull @NotNull UploadTask.TaskSnapshot taskSnapshot) {
-                // Update metadata properties
-                ImagesRef.updateMetadata(metadata)
-                        .addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-                            @Override
-                            public void onSuccess(@NonNull @NotNull StorageMetadata storageMetadata) {
-                                Toast.makeText(Accueil.this, "Votre signalement à bien été pris en compte!", Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                ImagesRef.delete();
-                                Toast.makeText(Accueil.this, "L'ajout des métadonnées à la photo n'a pas fonctionné, veuillez réessayer! " + exception.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+    private void redirectInfos(){
+        if(user != null){
+            try {
+                Intent viewIntent;
+                if (isModuleSelected) {
+                    switch (moduleSelected) {
+                        case "Equation 2nd degre":
+                            viewIntent = new Intent("android.intent.action.VIEW",
+                                    Uri.parse("https://www.mathematiquesfaciles.com/equations-equation-du-second-degre_2_33929.htm"));
+                            startActivity(viewIntent);
+                            break;
+                        case "Calculs basique":
+                            viewIntent = new Intent("android.intent.action.VIEW",
+                                    Uri.parse("https://www.mathematiquesfaciles.com/regles-et-calculs-de-base_2_112804.htm"));
+                            startActivity(viewIntent);
+                            break;
+                        case "Derivation":
+                            viewIntent = new Intent("android.intent.action.VIEW",
+                                    Uri.parse("https://www.methodemaths.fr/derivee/#:~:text=Pour%20d%C3%A9river%20ce%20type%20de,multiplie%20toujours%20par%20u'%20!!&text=Comme%20tu%20le%20vois%20c'est%20EXACTEMENT%20le%20m%C3%AAme%20tableau,fois%20la%20d%C3%A9riv%C3%A9e%20par%20u'."));
+                            startActivity(viewIntent);
+                            break;
+                        case "Integrale":
+                            viewIntent = new Intent("android.intent.action.VIEW",
+                                    Uri.parse("https://www.methodemaths.fr/integrale/"));
+                            startActivity(viewIntent);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } catch (Exception e){
+                Toast.makeText(Accueil.this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }
 
     }
 
@@ -256,6 +260,7 @@ public class Accueil extends AppCompatActivity {
         IntgrSup       = findViewById(R.id.IntgSup);
         IntgrInf       = findViewById(R.id.IntgInf);
         report_button  = findViewById(R.id.reportButton);
+        infos          = findViewById(R.id.infoButton);
 
         try {
             recyclerView.setVisibility(View.VISIBLE);
@@ -275,6 +280,9 @@ public class Accueil extends AppCompatActivity {
             recyclerView.setVisibility(View.GONE);
             recyclerView.setAlpha(0);
             menu.setVisibility(View.VISIBLE);
+            if(user != null){
+                infos.setVisibility(View.VISIBLE);
+            }
             if(moduleSelected.equals("Integrale")){
                 varIntgr.setVisibility(View.VISIBLE);
                 IntgrSup.setVisibility(View.VISIBLE);
@@ -293,6 +301,7 @@ public class Accueil extends AppCompatActivity {
             report_button.setVisibility(View.GONE);
             click_here.setVisibility(View.GONE);
             keyboardbutn.setVisibility(View.GONE);
+            infos.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setAlpha(1);
             menu.setVisibility(View.GONE);
@@ -634,6 +643,45 @@ public class Accueil extends AppCompatActivity {
         }
 
         return null;
+    }
+
+
+    // Enregistre le signalement de la photo avec le texte détecter par l'OCR
+    private void saveReportPics() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd:MM:yyyy-HH:mm:ss");
+        Uri u = Uri.fromFile(new File(UriSav.getPath()));
+        Date date = new Date();
+        System.out.println(formatter.format(date));
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference ImagesRef = storageRef.child("report/" + user.getEmail() + "/"+ date + ".jpg");
+        //Toast.makeText(Accueil.this, "OCRText = " + lastOCRtext, Toast.LENGTH_SHORT).show();
+
+        // Create file metadata including the content type
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setCustomMetadata("detectedText", lastOCRtext)
+                .build();
+        ImagesRef.putFile(u).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(@NonNull @NotNull UploadTask.TaskSnapshot taskSnapshot) {
+                // Update metadata properties
+                ImagesRef.updateMetadata(metadata)
+                        .addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                            @Override
+                            public void onSuccess(@NonNull @NotNull StorageMetadata storageMetadata) {
+                                Toast.makeText(Accueil.this, "Votre signalement à bien été pris en compte!", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                ImagesRef.delete();
+                                Toast.makeText(Accueil.this, "L'ajout des métadonnées à la photo n'a pas fonctionné, veuillez réessayer! " + exception.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+            }
+        });
+
     }
 
 }
