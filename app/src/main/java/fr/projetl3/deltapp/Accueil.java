@@ -238,14 +238,17 @@ public class Accueil extends AppCompatActivity {
         try {
             if (isModuleSelected) {
                 String equationText = inputCalc.getText().toString().trim();
-                result.setText("");
+                equationText = equationText.replaceAll(" ", "");
+                inputCalc.setText(equationText);
+                String str  = "";
+                result.setText(str);
                 switch (moduleSelected) {
                     case "Equation 2nd degre":
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Equation2Degre eq = new Equation2Degre(equationText);
-                            String str = eq.toString() + "\n" + eq.getResult();
-                            if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf")) {
+                            str = eq.toString() + "\n" + eq.getResult();
+                            if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf") || str.contains("NaN")){
                                 throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
                             }
                             result.setText(str);
@@ -258,7 +261,11 @@ public class Accueil extends AppCompatActivity {
                         try {
                             camera_capture.setVisibility(View.GONE);
                             CalculBasique calculBasique = new CalculBasique(equationText);
-                            result.setText(calculBasique.toString());
+                            str = calculBasique.toString();
+                            if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf") || str.contains("NaN")){
+                                throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
+                            }
+                            result.setText(str);
                             savelast10("Calculs basique", equationText);
                         } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -268,8 +275,11 @@ public class Accueil extends AppCompatActivity {
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Derive derive = new Derive(equationText);
-                            String text = "f(" + derive.getSymbole() + ") = " + derive.getFonction() + "\nf'(" + derive.getSymbole() + ") = " + derive.getResult();
-                            result.setText(text);
+                            str = "f(" + derive.getSymbole() + ") = " + derive.getFonction() + "\nf'(" + derive.getSymbole() + ") = " + derive.getResult();
+                            if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf") || str.contains("NaN")){
+                                throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
+                            }
+                            result.setText(str);
                             savelast10("Derivation", equationText);
                         } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -279,7 +289,11 @@ public class Accueil extends AppCompatActivity {
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Integrale integrale = new Integrale(equationText);
-                            result.setText(integrale.toString());
+                            str = integrale.toString();
+                            if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf") || str.contains("NaN")){
+                                throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
+                            }
+                            result.setText(str);
                             savelast10("Integrale", equationText);
                         } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -303,7 +317,7 @@ public class Accueil extends AppCompatActivity {
             File file = getOutputMediaFile();
             Uri uri = Uri.fromFile(file);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            //intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, 100);
         } catch (Exception e) {
@@ -314,40 +328,45 @@ public class Accueil extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 100) {
-            Bitmap captureImage = BitmapFactory.decodeFile(UriSav.toString());
-            int rotation = getImageOrientation(this, UriSav.toString());
-            Toast.makeText(Accueil.this, "Rotation =  " + rotation, Toast.LENGTH_LONG).show();
-            TextRecognizer recognizer = TextRecognition.getClient();
-            InputImage inputImage = null;
-            try {
-                inputImage = InputImage.fromBitmap(captureImage, rotation); // ,getRotationCompensation(getCameraId(),this,true)
-            } catch (Exception e) { // CameraAccessException
-                e.printStackTrace();
-            }
-            result.setText("");
-            Task<Text> result = recognizer.process(inputImage)
-                    .addOnSuccessListener(visionText -> {
-                        String blockText = "";
-                        for (Text.TextBlock tx : visionText.getTextBlocks()) {
-                            blockText = tx.getText();
-                            if (blockText.contains("=")) {
-                                break;
+        try {
+            if (requestCode == 100) {
+                Bitmap captureImage = BitmapFactory.decodeFile(UriSav.toString());
+                int rotation = getImageOrientation(this, UriSav.toString());
+                Toast.makeText(Accueil.this, "Rotation =  " + rotation, Toast.LENGTH_LONG).show();
+                TextRecognizer recognizer = TextRecognition.getClient();
+                InputImage inputImage = null;
+                try {
+                    inputImage = InputImage.fromBitmap(captureImage, rotation); // ,getRotationCompensation(getCameraId(),this,true)
+                } catch (Exception e) { // CameraAccessException
+                    e.printStackTrace();
+                }
+                result.setText("");
+                if(inputImage == null){
+                    throw new Exception("Erreur lors de la récupération de l'image.");
+                }
+                Task<Text> result = recognizer.process(inputImage)
+                        .addOnSuccessListener(visionText -> {
+                            String blockText = "";
+                            for (Text.TextBlock tx : visionText.getTextBlocks()) {
+                                blockText = tx.getText();
+                                if (blockText.contains("=")) {
+                                    break;
+                                }
                             }
-                        }
-                        //Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
-                        inputCalc.setText(blockText);
-                    })
-                    .addOnFailureListener(
-                            e -> {
-                                Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
-
-            camera_capture.setImageBitmap(captureImage);
-            camera_capture.setVisibility(View.VISIBLE);
-            click_here.setVisibility(View.GONE);
+                            //Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
+                            blockText = blockText.toLowerCase();
+                            blockText = blockText.replaceAll(" ", "");
+                            inputCalc.setText(blockText);
+                        })
+                        .addOnFailureListener(e -> { Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show(); });
+                camera_capture.setImageBitmap(captureImage);
+                camera_capture.setVisibility(View.VISIBLE);
+                click_here.setVisibility(View.GONE);
+            }
+        } catch (Exception e){
+            Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
     private File getOutputMediaFile() throws URISyntaxException {
@@ -509,7 +528,6 @@ public class Accueil extends AppCompatActivity {
         if (imageUri == null) {
             return -1;
         }
-
         String[] projection = {MediaStore.Images.ImageColumns.ORIENTATION};
         Cursor cursor = context.getContentResolver().query(imageUri, projection, null, null, null);
 
