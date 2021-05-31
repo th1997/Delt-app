@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -37,6 +38,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetl3.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,6 +49,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
@@ -83,7 +90,7 @@ public class Accueil extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 270);
     }
 
-    private ImageButton login, menu, keyboardbutn;
+    private ImageButton login, menu, keyboardbutn, report_button;
     private EditText inputCalc,varIntgr, IntgrSup, IntgrInf;
     private Button camera_button, calc;
     private TextView title, result;
@@ -92,6 +99,7 @@ public class Accueil extends AppCompatActivity {
     private URI UriSav;
     private boolean isModuleSelected = false;
     private String moduleSelected;
+    private String lastOCRtext;
     private FirebaseAuth mAuth;
     private RecyclerView recyclerView;
     private ArrayList<HashMap<String, String>> last10;
@@ -185,6 +193,51 @@ public class Accueil extends AppCompatActivity {
         keyboardbutn.setOnClickListener(v -> {
 
         });
+
+        report_button.setOnClickListener(v -> {
+            try {
+                saveReportPics();
+            } catch (Exception e){
+                Toast.makeText(Accueil.this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void saveReportPics() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd:MM:yyyy-HH:mm:ss");
+        Uri u = Uri.fromFile(new File(UriSav.getPath()));
+        Date date = new Date();
+        System.out.println(formatter.format(date));
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference ImagesRef = storageRef.child("report/" + user.getEmail() + "/"+ date + ".jpg");
+        //Toast.makeText(Accueil.this, "OCRText = " + lastOCRtext, Toast.LENGTH_SHORT).show();
+
+        // Create file metadata including the content type
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setCustomMetadata("detectedText", lastOCRtext)
+                .build();
+        ImagesRef.putFile(u).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(@NonNull @NotNull UploadTask.TaskSnapshot taskSnapshot) {
+                // Update metadata properties
+                ImagesRef.updateMetadata(metadata)
+                        .addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                            @Override
+                            public void onSuccess(@NonNull @NotNull StorageMetadata storageMetadata) {
+                                Toast.makeText(Accueil.this, "Votre signalement à bien été pris en compte!", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                ImagesRef.delete();
+                                Toast.makeText(Accueil.this, "L'ajout des métadonnées à la photo n'a pas fonctionné, veuillez réessayer! " + exception.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+            }
+        });
+
     }
 
     private void setupUI() {
@@ -202,6 +255,7 @@ public class Accueil extends AppCompatActivity {
         varIntgr       = findViewById(R.id.varIntg);
         IntgrSup       = findViewById(R.id.IntgSup);
         IntgrInf       = findViewById(R.id.IntgInf);
+        report_button  = findViewById(R.id.reportButton);
 
         try {
             recyclerView.setVisibility(View.VISIBLE);
@@ -236,6 +290,7 @@ public class Accueil extends AppCompatActivity {
             calc.setVisibility(View.GONE);
             result.setVisibility(View.GONE);
             camera_capture.setVisibility(View.GONE);
+            report_button.setVisibility(View.GONE);
             click_here.setVisibility(View.GONE);
             keyboardbutn.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
@@ -369,11 +424,13 @@ public class Accueil extends AppCompatActivity {
                             //Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
                             blockText = blockText.toLowerCase();
                             blockText = blockText.replaceAll(" ", "");
+                            lastOCRtext = blockText;
                             inputCalc.setText(blockText);
                         })
                         .addOnFailureListener(e -> { Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show(); });
                 camera_capture.setImageBitmap(captureImage);
                 camera_capture.setVisibility(View.VISIBLE);
+                if(user != null){ report_button.setVisibility(View.VISIBLE); }
                 click_here.setVisibility(View.GONE);
             }
         } catch (Exception e){
