@@ -52,12 +52,10 @@ public class Modules {
                 if(line.equals("<" +moduleName +">"))
                     find = true;
                 else if(find)
-                    if(line.contains("\n")){
-                        String split[] = line.split("\n");
-                        for (String s : split) {
-                            description = description.concat("\n" + s);
-                            System.out.println(description);
-                        }
+                    if(line.contains("\\n")){
+                        String[] split = line.split("\\n");
+                        description = description.concat(split[0].replace("\\n","\n"));
+                        System.out.println(split[0]);
                     } else {
                         description = description.concat(line);
                     }
