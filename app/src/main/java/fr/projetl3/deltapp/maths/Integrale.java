@@ -11,7 +11,7 @@ public class Integrale {
 
     public Integrale(String integral) throws SyntaxException {
         try {
-            this.integrale = new Expression(integral);
+            this.integrale = new Expression("int(" +integral +")");
             expr = this.integrale.getExpressionString();
             result = integrale.calculate();
         } catch (Exception e){

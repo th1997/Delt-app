@@ -101,13 +101,15 @@
         android:background="@drawable/text_border"
         android:ems="10"
         android:text=""
+        android:hint="Fonction"
         android:textColor="?attr/themesTextColor"
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView" />
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+/>
 
     <TextView
         android:id="@+id/tv_result"
@@ -190,5 +192,61 @@
         app:layout_constraintTop_toBottomOf="@id/tv_module_title"
         app:layout_constraintEnd_toEndOf="@+id/tv_module_title"
         app:layout_constraintStart_toStartOf="@+id/tv_module_title" />
+
+    <EditText
+        android:id="@+id/varIntg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/text_border"
+        android:ems="10"
+        android:hint="Variable à integrer (x par defaut)"
+        android:textColor="?attr/themesTextColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_calc"
+        app:layout_constraintBottom_toTopOf="@id/IntgSup" />
+
+    <EditText
+        android:id="@+id/IntgSup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/text_border"
+        android:ems="10"
+        android:hint="Borne superieur"
+        android:textColor="?attr/themesTextColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/varIntg"
+        app:layout_constraintBottom_toTopOf="@id/IntgInf" />
+
+    <EditText
+        android:id="@+id/IntgInf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/text_border"
+        android:ems="10"
+        android:hint="Borne inférieur"
+        android:textColor="?attr/themesTextColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/IntgSup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -84,7 +84,7 @@ public class Accueil extends AppCompatActivity {
     }
 
     private ImageButton login, menu, keyboardbutn;
-    private EditText inputCalc;
+    private EditText inputCalc,varIntgr, IntgrSup, IntgrInf;
     private Button camera_button, calc;
     private TextView title, result;
     private ImageView camera_capture, click_here;
@@ -188,19 +188,20 @@ public class Accueil extends AppCompatActivity {
     }
 
     private void setupUI() {
-        login = findViewById(R.id.login_button_accueil);
-        menu = findViewById(R.id.menu_button_accueil);
-        camera_button = findViewById(R.id.camera_capture_button_accueil);
-        click_here = findViewById(R.id.iv_click_here);
-
-        title = findViewById(R.id.tv_module_title);
-        calc = findViewById(R.id.calc_button);
-        result = findViewById(R.id.tv_result);
-
-        inputCalc = findViewById(R.id.input_calc);
-        keyboardbutn = findViewById(R.id.keyboardbtn);
+        login          = findViewById(R.id.login_button_accueil);
+        menu           = findViewById(R.id.menu_button_accueil);
+        camera_button  = findViewById(R.id.camera_capture_button_accueil);
+        click_here     = findViewById(R.id.iv_click_here);
+        title          = findViewById(R.id.tv_module_title);
+        calc           = findViewById(R.id.calc_button);
+        result         = findViewById(R.id.tv_result);
+        inputCalc      = findViewById(R.id.input_calc);
+        keyboardbutn   = findViewById(R.id.keyboardbtn);
         camera_capture = findViewById(R.id.iv_camera_capture);
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView   = findViewById(R.id.recyclerView);
+        varIntgr       = findViewById(R.id.varIntg);
+        IntgrSup       = findViewById(R.id.IntgSup);
+        IntgrInf       = findViewById(R.id.IntgInf);
 
         try {
             recyclerView.setVisibility(View.VISIBLE);
@@ -220,6 +221,15 @@ public class Accueil extends AppCompatActivity {
             recyclerView.setVisibility(View.GONE);
             recyclerView.setAlpha(0);
             menu.setVisibility(View.VISIBLE);
+            if(moduleSelected.equals("Integrale")){
+                varIntgr.setVisibility(View.VISIBLE);
+                IntgrSup.setVisibility(View.VISIBLE);
+                IntgrInf.setVisibility(View.VISIBLE);
+            } else{
+                varIntgr.setVisibility(View.GONE);
+                IntgrSup.setVisibility(View.GONE);
+                IntgrInf.setVisibility(View.GONE);
+            }
 
         } else {
             inputCalc.setVisibility(View.GONE);
@@ -231,6 +241,9 @@ public class Accueil extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setAlpha(1);
             menu.setVisibility(View.GONE);
+            varIntgr.setVisibility(View.GONE);
+            IntgrSup.setVisibility(View.GONE);
+            IntgrInf.setVisibility(View.GONE);
         }
     }
 
@@ -288,7 +301,7 @@ public class Accueil extends AppCompatActivity {
                     case "Integrale":
                         try {
                             camera_capture.setVisibility(View.GONE);
-                            Integrale integrale = new Integrale(equationText);
+                            Integrale integrale = new Integrale(equationText +"," +varIntgr.getText().toString().trim() +","+IntgrSup.getText().toString().trim() +"," +IntgrInf.getText().toString().trim());
                             str = integrale.toString();
                             if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf") || str.contains("NaN")){
                                 throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");

@@ -10,7 +10,6 @@ public class Equation2Degre {
         equation = "";
         polynome = new Polynome(eq);
         construireEquationSimplifier();
-
     }
 
     public String getEquation() {
