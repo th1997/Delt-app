@@ -1,8 +1,35 @@
 package fr.projetl3.deltapp;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.util.SparseIntArray;
+import android.view.Surface;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -24,44 +51,9 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.util.SparseIntArray;
-import android.view.Surface;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -77,14 +69,13 @@ import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 import fr.projetl3.deltapp.maths.Integrale;
-import fr.projetl3.deltapp.maths.SyntaxException;
 import fr.projetl3.deltapp.recyclerViews.CustomRecyclerViewAdapter;
 
 public class Accueil extends AppCompatActivity {
 
 
-
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 0);
         ORIENTATIONS.append(Surface.ROTATION_90, 90);
@@ -92,15 +83,15 @@ public class Accueil extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 270);
     }
 
-    private ImageButton  login, menu, keyboardbutn;
-    private EditText     inputCalc;
-    private Button       camera_button, calc;
-    private TextView     title, result;
-    private ImageView    camera_capture, click_here;
+    private ImageButton login, menu, keyboardbutn;
+    private EditText inputCalc;
+    private Button camera_button, calc;
+    private TextView title, result;
+    private ImageView camera_capture, click_here;
     private FirebaseUser user;
-    private URI          UriSav;
-    private boolean      isModuleSelected = false;
-    private String       moduleSelected;
+    private URI UriSav;
+    private boolean isModuleSelected = false;
+    private String moduleSelected;
     private FirebaseAuth mAuth;
     private RecyclerView recyclerView;
     private ArrayList<HashMap<String, String>> last10;
@@ -110,12 +101,17 @@ public class Accueil extends AppCompatActivity {
     private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
     private static final String THEMES = "fr.projetl3.deltapp.themes";
     private boolean IS_DARK;
+
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
         SharedPreferences preferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         IS_DARK = preferences.getBoolean(THEMES, false);
-        if(IS_DARK){ theme.applyStyle(R.style.daynight, true); } else { theme.applyStyle(R.style.light, true); }
+        if (IS_DARK) {
+            theme.applyStyle(R.style.daynight, true);
+        } else {
+            theme.applyStyle(R.style.light, true);
+        }
         return theme;
     }
 
@@ -135,7 +131,7 @@ public class Accueil extends AppCompatActivity {
         switchUIvisibility();
 
         mAuth = FirebaseAuth.getInstance();
-        user  = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
 
         List<Modules> modules = getListData();
         recyclerView.setAdapter(new CustomRecyclerViewAdapter(this, modules));
@@ -146,25 +142,25 @@ public class Accueil extends AppCompatActivity {
 
         login.setOnClickListener(v -> {
             try {
-                if(user != null)
+                if (user != null)
                     startActivity(new Intent(getApplicationContext(), Account.class));
                 else
                     startActivity(new Intent(getApplicationContext(), LoginApp.class));
-            } catch (Exception e){
+            } catch (Exception e) {
                 Toast.makeText(Accueil.this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
         });
 
         camera_button.setOnClickListener(v -> {
-            if(isModuleSelected)
+            if (isModuleSelected)
                 turnCameraON();
             else
                 Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
         });
 
         menu.setOnClickListener(v -> {
-            if(isModuleSelected){
+            if (isModuleSelected) {
                 // Ouvre camera et caches la selection des modules.
                 isModuleSelected = false;
                 switchUIvisibility();
@@ -180,42 +176,42 @@ public class Accueil extends AppCompatActivity {
         calc.setOnClickListener(v -> {
             String inputText = inputCalc.getText().toString().trim();
 
-            if(inputText.isEmpty())
+            if (inputText.isEmpty())
                 Toast.makeText(Accueil.this, "Vous devez remplir la zone de texte", Toast.LENGTH_SHORT).show();
             else
                 calcul();
         });
 
-        keyboardbutn.setOnClickListener(v->{
+        keyboardbutn.setOnClickListener(v -> {
 
         });
     }
 
-    private void setupUI(){
-        login          = findViewById(R.id.login_button_accueil);
-        menu           = findViewById(R.id.menu_button_accueil);
-        camera_button  = findViewById(R.id.camera_capture_button_accueil);
-        click_here     = findViewById(R.id.iv_click_here);
+    private void setupUI() {
+        login = findViewById(R.id.login_button_accueil);
+        menu = findViewById(R.id.menu_button_accueil);
+        camera_button = findViewById(R.id.camera_capture_button_accueil);
+        click_here = findViewById(R.id.iv_click_here);
 
-        title          = findViewById(R.id.tv_module_title);
-        calc           = findViewById(R.id.calc_button);
-        result         = findViewById(R.id.tv_result);
+        title = findViewById(R.id.tv_module_title);
+        calc = findViewById(R.id.calc_button);
+        result = findViewById(R.id.tv_result);
 
-        inputCalc      = findViewById(R.id.input_calc);
-        keyboardbutn   = findViewById(R.id.keyboardbtn);
+        inputCalc = findViewById(R.id.input_calc);
+        keyboardbutn = findViewById(R.id.keyboardbtn);
         camera_capture = findViewById(R.id.iv_camera_capture);
-        recyclerView   = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
 
         try {
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setAlpha(1);
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void switchUIvisibility(){
-        if(isModuleSelected){
+    private void switchUIvisibility() {
+        if (isModuleSelected) {
             inputCalc.setVisibility(View.VISIBLE);
             calc.setVisibility(View.VISIBLE);
             result.setVisibility(View.VISIBLE);
@@ -238,23 +234,23 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
-    private void calcul(){
+    private void calcul() {
         try {
-            if(isModuleSelected){
+            if (isModuleSelected) {
                 String equationText = inputCalc.getText().toString().trim();
                 result.setText("");
-                switch (moduleSelected){
+                switch (moduleSelected) {
                     case "Equation 2nd degre":
                         try {
                             camera_capture.setVisibility(View.GONE);
-                            Equation2Degre eq   = new Equation2Degre(equationText);
+                            Equation2Degre eq = new Equation2Degre(equationText);
                             String str = eq.toString() + "\n" + eq.getResult();
-                            if(str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf")){
+                            if (str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf")) {
                                 throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
                             }
                             result.setText(str);
                             savelast10("Equation 2nd degre", equationText);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         break;
@@ -264,7 +260,7 @@ public class Accueil extends AppCompatActivity {
                             CalculBasique calculBasique = new CalculBasique(equationText);
                             result.setText(calculBasique.toString());
                             savelast10("Calculs basique", equationText);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         break;
@@ -275,7 +271,7 @@ public class Accueil extends AppCompatActivity {
                             String text = "f(" + derive.getSymbole() + ") = " + derive.getFonction() + "\nf'(" + derive.getSymbole() + ") = " + derive.getResult();
                             result.setText(text);
                             savelast10("Derivation", equationText);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         break;
@@ -285,7 +281,7 @@ public class Accueil extends AppCompatActivity {
                             Integrale integrale = new Integrale(equationText);
                             result.setText(integrale.toString());
                             savelast10("Integrale", equationText);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         break;
@@ -296,13 +292,13 @@ public class Accueil extends AppCompatActivity {
             } else {
                 Toast.makeText(Accueil.this, "Vous devez sélectionner un module avant de prendre en photo!", Toast.LENGTH_SHORT).show();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(Accueil.this, "Erreur = " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    private void turnCameraON(){
+    private void turnCameraON() {
         try {
             File file = getOutputMediaFile();
             Uri uri = Uri.fromFile(file);
@@ -310,7 +306,7 @@ public class Accueil extends AppCompatActivity {
             //intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, 100);
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -320,23 +316,23 @@ public class Accueil extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 100) {
-            Bitmap  captureImage      = BitmapFactory.decodeFile(UriSav.toString());
+            Bitmap captureImage = BitmapFactory.decodeFile(UriSav.toString());
             int rotation = getImageOrientation(this, UriSav.toString());
             Toast.makeText(Accueil.this, "Rotation =  " + rotation, Toast.LENGTH_LONG).show();
             TextRecognizer recognizer = TextRecognition.getClient();
-            InputImage     inputImage = null;
+            InputImage inputImage = null;
             try {
                 inputImage = InputImage.fromBitmap(captureImage, rotation); // ,getRotationCompensation(getCameraId(),this,true)
             } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
             result.setText("");
-            Task<Text>     result     = recognizer.process(inputImage)
+            Task<Text> result = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
-                        for(Text.TextBlock tx : visionText.getTextBlocks()) {
+                        for (Text.TextBlock tx : visionText.getTextBlocks()) {
                             blockText = tx.getText();
-                            if(blockText.contains("=")){
+                            if (blockText.contains("=")) {
                                 break;
                             }
                         }
@@ -354,12 +350,12 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
-    private  File getOutputMediaFile() throws URISyntaxException {
-        File   mediaFile;
+    private File getOutputMediaFile() throws URISyntaxException {
+        File mediaFile;
         @SuppressLint("SimpleDateFormat")
-        String timeStamp       = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
-        String mImageName      = "MI_"+ timeStamp +".png";
-        File   mediaStorageDir = new File(getExternalFilesDir(null),"");
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        String mImageName = "MI_" + timeStamp + ".png";
+        File mediaStorageDir = new File(getExternalFilesDir(null), "");
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists())
@@ -372,13 +368,13 @@ public class Accueil extends AppCompatActivity {
         return mediaFile;
     }
 
-    private void checkPerm(){
-        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+    private void checkPerm() {
+        if (ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Accueil.this, new String[]{
                     Manifest.permission.CAMERA
             }, 100);
         }
-        if(ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(Accueil.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Accueil.this, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, 100);
@@ -386,26 +382,26 @@ public class Accueil extends AppCompatActivity {
     }
 
 
-    private  List<Modules> getListData() {
+    private List<Modules> getListData() {
         List<Modules> list = new ArrayList<>();
 
-        list.add(new Modules("Calculs basique",this));
-        list.add(new Modules("Equation 2nd degre",this));
-        list.add(new Modules("Derivation",this));
-        list.add(new Modules("Integrale",this));
+        list.add(new Modules("Calculs basique", this));
+        list.add(new Modules("Equation 2nd degre", this));
+        list.add(new Modules("Derivation", this));
+        list.add(new Modules("Integrale", this));
 
         return list;
     }
 
     public void selectModule(String moduleName) {
-        moduleSelected   = moduleName;
+        moduleSelected = moduleName;
         isModuleSelected = true;
         switchUIvisibility();
         title.setText(moduleName);
         camera_button.setBackgroundResource(R.drawable.rounded_button);
     }
 
-    private void saveArrayList(ArrayList<HashMap<String, String>> arrayList, DatabaseReference data){
+    private void saveArrayList(ArrayList<HashMap<String, String>> arrayList, DatabaseReference data) {
         try {
             data.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(arrayList).addOnCompleteListener(task1 -> {
                 if (task1.isSuccessful()) {
@@ -414,32 +410,35 @@ public class Accueil extends AppCompatActivity {
                     Toast.makeText(Accueil.this, Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    private void savelast10(String name, String expression){
+    private void savelast10(String name, String expression) {
         try {
-            if(user != null){
+            if (user != null) {
                 last10 = new ArrayList<>();
                 String user_id = user.getUid();
-                DatabaseReference rootRef  = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference usersRef = rootRef.child("last10");
 
                 usersRef.child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<HashMap<String, String>>> al = new GenericTypeIndicator<ArrayList<HashMap<String, String>>>(){};
+                        GenericTypeIndicator<ArrayList<HashMap<String, String>>> al = new GenericTypeIndicator<ArrayList<HashMap<String, String>>>() {
+                        };
                         ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put(name, expression);
                         arrayList.add(hashMap);
                         last10 = snapshot.getValue(al);
                         if (last10 != null) {
-                            if (last10.size() == 10){last10.remove(9); }
+                            if (last10.size() == 10) {
+                                last10.remove(9);
+                            }
                             arrayList.addAll(last10);
                             saveArrayList(arrayList, usersRef);
                         } else {
@@ -454,7 +453,7 @@ public class Accueil extends AppCompatActivity {
                     }
                 });
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
@@ -463,7 +462,7 @@ public class Accueil extends AppCompatActivity {
     // ROTATION :
     public int getImageOrientation(Context context, String imagePath) {
         int orientation = getOrientationFromExif(imagePath);
-        if(orientation <= 0) {
+        if (orientation <= 0) {
             orientation = getOrientationFromMediaStore(context, imagePath);
         }
 
@@ -507,7 +506,7 @@ public class Accueil extends AppCompatActivity {
 
     private int getOrientationFromMediaStore(Context context, String imagePath) {
         Uri imageUri = getImageContentUri(context, imagePath);
-        if(imageUri == null) {
+        if (imageUri == null) {
             return -1;
         }
 
@@ -524,9 +523,9 @@ public class Accueil extends AppCompatActivity {
     }
 
     private Uri getImageContentUri(Context context, String imagePath) {
-        String[] projection = new String[] {MediaStore.Images.Media._ID};
+        String[] projection = new String[]{MediaStore.Images.Media._ID};
         String selection = MediaStore.Images.Media.DATA + "=? ";
-        String[] selectionArgs = new String[] {imagePath};
+        String[] selectionArgs = new String[]{imagePath};
         Uri IMAGE_PROVIDER_URI = Uri.fromFile(new File(imagePath));
         Cursor cursor = context.getContentResolver().query(IMAGE_PROVIDER_URI, projection,
                 selection, selectionArgs, null);
