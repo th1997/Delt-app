@@ -26,21 +26,15 @@ import com.google.mlkit.vision.text.TextRecognizer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -335,6 +329,7 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -350,6 +345,7 @@ public class Accueil extends AppCompatActivity {
             } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
+            assert inputImage != null;
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
@@ -363,15 +359,12 @@ public class Accueil extends AppCompatActivity {
                         inputCalc.setText(blockText);
                     })
                     .addOnFailureListener(
-                            e -> {
-                                Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
+                            e -> Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show());
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
             click_here.setVisibility(View.GONE);
         }
-       // if ()
     }
 
     private  File getOutputMediaFile() throws URISyntaxException {
@@ -461,11 +454,8 @@ public class Accueil extends AppCompatActivity {
                         if (last10 != null) {
                             if (last10.size() == 10){last10.remove(9); }
                             arrayList.addAll(last10);
-                            saveArrayList(arrayList, usersRef);
-                        } else {
-                            //Toast.makeText(Accueil.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
-                            saveArrayList(arrayList, usersRef);
                         }
+                        saveArrayList(arrayList, usersRef);
                     }
 
                     @Override
@@ -481,6 +471,7 @@ public class Accueil extends AppCompatActivity {
     }
 
     // ROTATION :
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     public int getImageOrientation(Context context, String imagePath) {
         int orientation = getOrientationFromExif(imagePath);
         if(orientation <= 0) {
@@ -525,6 +516,7 @@ public class Accueil extends AppCompatActivity {
         return orientation;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private int getOrientationFromMediaStore(Context context, String imagePath) {
         Uri imageUri = getImageContentUri(context, imagePath);
         if(imageUri == null) {

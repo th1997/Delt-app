@@ -2,7 +2,6 @@ package fr.projetl3.deltapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
@@ -189,12 +187,12 @@ public class Account extends AppCompatActivity {
     private void loadSpinner() {
         if(IS_DARK){
             String[] arraySpinner = {"Thèmes appliqué : Sombre", "Clair"};
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
         } else {
             String[] arraySpinner = {"Thèmes appliqué : Clair", "Sombre"};
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
         }
@@ -283,9 +281,9 @@ public class Account extends AppCompatActivity {
                         GenericTypeIndicator<ArrayList<HashMap<String, String>>> al = new GenericTypeIndicator<ArrayList<HashMap<String, String>>>(){};
                         ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
                         HashMap<String, String> hashMap;
-                        HashMap<String, String> hashMap2 = new HashMap<>();
+                        HashMap<String, String> hashMap2;
 
-                        String moduleName = "", formule = "", resultat = "";
+                        String moduleName, formule, resultat;
                         last10 = snapshot.getValue(al);
                         try {
                             if (last10 != null) {
@@ -306,6 +304,7 @@ public class Account extends AppCompatActivity {
                                         moduleName = "Derivation";
                                         formule = hashMap.get(moduleName);
                                         Derive derive = new Derive(formule);
+                                        assert formule != null;
                                         formule = "f(" + derive.getSymbole() + ") = ".concat(formule);
                                         resultat = "f'(" + derive.getSymbole() + ") = ".concat(derive.getResult());
                                     } else if(hashMap.containsKey("Integrale")){
