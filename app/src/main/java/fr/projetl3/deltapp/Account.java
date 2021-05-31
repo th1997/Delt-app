@@ -20,6 +20,7 @@ import com.google.firebase.storage.StorageReference;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -80,6 +81,7 @@ public class Account extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mSpinnerInitialized = false;
         mAuth = FirebaseAuth.getInstance();
         user  = mAuth.getCurrentUser();

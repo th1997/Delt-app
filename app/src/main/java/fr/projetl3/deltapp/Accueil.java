@@ -26,15 +26,21 @@ import com.google.mlkit.vision.text.TextRecognizer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -71,13 +77,12 @@ import fr.projetl3.deltapp.maths.CalculBasique;
 import fr.projetl3.deltapp.maths.Derive;
 import fr.projetl3.deltapp.maths.Equation2Degre;
 import fr.projetl3.deltapp.maths.Integrale;
+import fr.projetl3.deltapp.maths.SyntaxException;
 import fr.projetl3.deltapp.recyclerViews.CustomRecyclerViewAdapter;
 
 public class Accueil extends AppCompatActivity {
 
-    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
-    private static final String THEMES = "fr.projetl3.deltapp.themes";
-    private boolean IS_DARK;
+
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -102,7 +107,9 @@ public class Accueil extends AppCompatActivity {
 
     public static final String LOG_TAG = "AndroidExample";
 
-
+    private static final String SHARED_PREF = "fr.projetl3.deltapp.shared_pref";
+    private static final String THEMES = "fr.projetl3.deltapp.themes";
+    private boolean IS_DARK;
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
@@ -116,6 +123,7 @@ public class Accueil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         try {
             Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
             m.invoke(null);
@@ -183,32 +191,6 @@ public class Accueil extends AppCompatActivity {
         });
     }
 
-    /*
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private int getRotationCompensation(String cameraId, Activity activity, boolean isFrontFacing)
-            throws CameraAccessException {
-        // Get the device's current rotation relative to its "native" orientation.
-        // Then, from the ORIENTATIONS table, look up the angle the image must be
-        // rotated to compensate for the device's rotation.
-        int deviceRotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        int rotationCompensation = ORIENTATIONS.get(deviceRotation);
-
-        // Get the device's sensor orientation.
-        CameraManager cameraManager = (CameraManager) activity.getSystemService(CAMERA_SERVICE);
-        int sensorOrientation = cameraManager
-                .getCameraCharacteristics(cameraId)
-                .get(CameraCharacteristics.SENSOR_ORIENTATION);
-
-        if (isFrontFacing) {
-            rotationCompensation = (sensorOrientation + rotationCompensation) % 360;
-        } else { // back-facing
-            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
-        }
-        return rotationCompensation;
-
-    }
-    */
-
     private void setupUI(){
         login          = findViewById(R.id.login_button_accueil);
         menu           = findViewById(R.id.menu_button_accueil);
@@ -260,13 +242,17 @@ public class Accueil extends AppCompatActivity {
         try {
             if(isModuleSelected){
                 String equationText = inputCalc.getText().toString().trim();
+                result.setText("");
                 switch (moduleSelected){
                     case "Equation 2nd degre":
                         try {
                             camera_capture.setVisibility(View.GONE);
                             Equation2Degre eq   = new Equation2Degre(equationText);
-                            Toast.makeText(Accueil.this,"Map: " +  eq.getPolynome().getCoefficientPolynome().toString(), Toast.LENGTH_SHORT).show();
-                            result.setText(eq.toString() + "\n" + eq.getResult());
+                            String str = eq.toString() + "\n" + eq.getResult();
+                            if(str.equalsIgnoreCase("") || str.contains("NaNi") || str.contains("Inf")){
+                                throw new Exception("Une erreur lors de l'analyse de votre équation du second degrè s'est produite, veuillez vérifier la syntaxe!");
+                            }
+                            result.setText(str);
                             savelast10("Equation 2nd degre", equationText);
                         }catch (Exception e){
                             Toast.makeText(Accueil.this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -329,7 +315,6 @@ public class Accueil extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -345,7 +330,7 @@ public class Accueil extends AppCompatActivity {
             } catch (Exception e) { // CameraAccessException
                 e.printStackTrace();
             }
-            assert inputImage != null;
+            result.setText("");
             Task<Text>     result     = recognizer.process(inputImage)
                     .addOnSuccessListener(visionText -> {
                         String blockText = "";
@@ -355,11 +340,13 @@ public class Accueil extends AppCompatActivity {
                                 break;
                             }
                         }
-                        Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(Accueil.this, "Succès OCR: " +blockText, Toast.LENGTH_LONG).show();
                         inputCalc.setText(blockText);
                     })
                     .addOnFailureListener(
-                            e -> Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                            e -> {
+                                Toast.makeText(Accueil.this, "Erreur OCR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            });
 
             camera_capture.setImageBitmap(captureImage);
             camera_capture.setVisibility(View.VISIBLE);
@@ -454,8 +441,11 @@ public class Accueil extends AppCompatActivity {
                         if (last10 != null) {
                             if (last10.size() == 10){last10.remove(9); }
                             arrayList.addAll(last10);
+                            saveArrayList(arrayList, usersRef);
+                        } else {
+                            //Toast.makeText(Accueil.this, "Vous n'avez réalisé aucun calculs.", Toast.LENGTH_LONG).show();
+                            saveArrayList(arrayList, usersRef);
                         }
-                        saveArrayList(arrayList, usersRef);
                     }
 
                     @Override
@@ -471,7 +461,6 @@ public class Accueil extends AppCompatActivity {
     }
 
     // ROTATION :
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public int getImageOrientation(Context context, String imagePath) {
         int orientation = getOrientationFromExif(imagePath);
         if(orientation <= 0) {
@@ -516,7 +505,6 @@ public class Accueil extends AppCompatActivity {
         return orientation;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private int getOrientationFromMediaStore(Context context, String imagePath) {
         Uri imageUri = getImageContentUri(context, imagePath);
         if(imageUri == null) {

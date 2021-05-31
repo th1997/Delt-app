@@ -18,7 +18,11 @@
         <item name="themesAccueilTitle">@color/black</item>
         <item name="themesBackgroundColor">@color/white</item>
         <item name="themesTextColor">@color/black</item>
-        <item name="themesCalcButton">@color/firefly</item>
+        <item name="themesTextColorAccount">#A9A9A9</item>
+        <item name="themesButton">@color/bluebutton</item>
+        <item name="themesEditTextBorder">@color/black</item>
+        <item name="themesRevertEditTextBorder">@color/white</item>
+        <item name="themesImageViewLogin">@color/browser_actions_bg_grey</item>
 
     </style>
 
@@ -33,7 +37,11 @@
         <item name="themesAccueilTitle">@color/white</item>
         <item name="themesBackgroundColor">@color/black</item>
         <item name="themesTextColor">@color/white</item>
-        <item name="themesCalcButton">#ecccc8</item>
+        <item name="themesTextColorAccount">#A9A9A9</item>
+        <item name="themesButton">@color/bluebutton</item>
+        <item name="themesEditTextBorder">@color/white</item>
+        <item name="themesRevertEditTextBorder">@color/dark</item>
+        <item name="themesImageViewLogin">@color/dark</item>
 
     </style>
 </resources>
